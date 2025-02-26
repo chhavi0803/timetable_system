@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard - Timetable Management System</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Student Dashboard</h1>
+    </header>
+    <div class="container">
+        <a href="{{ url_for('logout') }}">Logout</a>
+        
+        <h2>Your Timetable</h2>
+        <ul>
+        {% for timetable in timetables %}
+            <li>{{ timetable.day }} - {{ timetable.time_slot }} - {{ timetable.subject.subject_name }} - {{ timetable.teacher.teacher_name }}</li>
+        {% endfor %}
+        </ul>
+
+        <h2>Generate Timetable PDF</h2>
+        <form method="GET" action="{{ url_for('generate_pdf_route') }}">
+            <button type="submit">Download PDF</button>
+        </form>
+    </div>
+</body>
+</html>
