@@ -1,16 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timetable Management System</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            background-image: url('{{ url_for('static', filename='images/index-background.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .content h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .content a {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 18px;
+            text-decoration: none;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .content a:hover {
+            background-color: #0056b3;
+        }
+
+        .content p {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .content a.secondary {
+            background-color: #28a745;
+        }
+
+        .content a.secondary:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Timetable Management System</h1>
-    </header>
-    <div class="container">
+    <div class="content">
+        <h1>Welcome to Timetable Management System</h1>
+        <p>Effortlessly manage your classes, teachers, and subjects!</p>
         <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('signup') }}">Sign Up</a>
+        <a href="{{ url_for('signup') }}" class="secondary">Sign Up</a>
     </div>
 </body>
 </html>

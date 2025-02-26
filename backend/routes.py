@@ -26,6 +26,7 @@ def init_routes(app):
             db.session.add(user)
             try:
                 db.session.commit()
+                flash('Registration successful! Please log in.', 'success')
                 return redirect(url_for('login'))
             except IntegrityError:
                 db.session.rollback()
@@ -43,6 +44,7 @@ def init_routes(app):
                 if check_password_hash(user.password, password):
                     session['user_id'] = user.id
                     session['user_role'] = user.role
+                    flash('Login successful!', 'success')
                     if user.role == 'admin':
                         return redirect(url_for('admin_dashboard'))
                     elif user.role == 'teacher':
@@ -257,6 +259,12 @@ def init_routes(app):
         subject_id = request.form['subject_id']
         teacher_id = request.form['teacher_id']
 
+        # Check for conflicts
+        conflict = Timetable.query.filter_by(day=day, time_slot=time_slot, teacher_id=teacher_id).first()
+        if conflict:
+            flash('Conflict detected: The same teacher is assigned to another class at the same time.', 'error')
+            return redirect(url_for('admin_dashboard'))
+
         timetable = Timetable(class_id=class_id, day=day, time_slot=time_slot, subject_id=subject_id, teacher_id=teacher_id)
         db.session.add(timetable)
         try:
@@ -278,6 +286,12 @@ def init_routes(app):
         timetable.time_slot = request.form['time_slot']
         timetable.subject_id = request.form['subject_id']
         timetable.teacher_id = request.form['teacher_id']
+
+        # Check for conflicts
+        conflict = Timetable.query.filter_by(day=timetable.day, time_slot=timetable.time_slot, teacher_id=timetable.teacher_id).filter(Timetable.id != timetable_id).first()
+        if conflict:
+            flash('Conflict detected: The same teacher is assigned to another class at the same time.', 'error')
+            return redirect(url_for('admin_dashboard'))
 
         try:
             db.session.commit()

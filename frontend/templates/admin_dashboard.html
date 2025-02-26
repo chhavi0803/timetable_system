@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,310 +8,352 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body>
 
-<div class="container mt-4">
-    <h2>Admin Dashboard</h2>
-    <div class="accordion" id="adminDashboardAccordion">
-        
-        <!-- Overview/Summary Section -->
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingOverview">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOverview" aria-expanded="true" aria-controls="collapseOverview">
-                    Overview/Summary
-                </button>
-            </h2>
-            <div id="collapseOverview" class="accordion-collapse collapse show" aria-labelledby="headingOverview" data-bs-parent="#adminDashboardAccordion">
-                <div class="accordion-body">
-                    <h5>System Metrics</h5>
-                    <ul>
-                        <li>Total Users: {{ total_users }}</li>
-                        <li>Total Classes: {{ total_classes }}</li>
-                        <li>Total Subjects: {{ total_subjects }}</li>
-                        <li>Total Timetables: {{ total_timetables }}</li>
-                    </ul>
-                    <h5>Recent Activity Logs</h5>
-                    <ul>
-                        {% for log in recent_logs %}
+    <div class="container mt-4">
+        <h2>Admin Dashboard</h2>
+        <div class="accordion" id="adminDashboardAccordion">
+
+            <!-- Overview/Summary Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOverview">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOverview" aria-expanded="true" aria-controls="collapseOverview">
+                        Overview/Summary
+                    </button>
+                </h2>
+                <div id="collapseOverview" class="accordion-collapse collapse show" aria-labelledby="headingOverview"
+                    data-bs-parent="#adminDashboardAccordion">
+                    <div class="accordion-body">
+                        <h5>System Metrics</h5>
+                        <ul>
+                            <li>Total Users: {{ total_users }}</li>
+                            <li>Total Classes: {{ total_classes }}</li>
+                            <li>Total Subjects: {{ total_subjects }}</li>
+                            <li>Total Timetables: {{ total_timetables }}</li>
+                        </ul>
+                        <h5>Recent Activity Logs</h5>
+                        <ul>
+                            {% for log in recent_logs %}
                             <li>{{ log }}</li>
-                        {% endfor %}
-                    </ul>
-                    <h5>Quick Links</h5>
-                    <ul>
-                        <li><a href="#collapseUsers" data-bs-toggle="collapse" data-bs-target="#collapseUsers">Manage Users</a></li>
-                        <li><a href="#collapseClasses" data-bs-toggle="collapse" data-bs-target="#collapseClasses">Manage Classes</a></li>
-                        <li><a href="#collapseSubjects" data-bs-toggle="collapse" data-bs-target="#collapseSubjects">Manage Subjects</a></li>
-                        <li><a href="#collapseTeachers" data-bs-toggle="collapse" data-bs-target="#collapseTeachers">Manage Teachers</a></li>
-                        <li><a href="#collapseTimetable" data-bs-toggle="collapse" data-bs-target="#collapseTimetable">Manage Timetables</a></li>
-                    </ul>
+                            {% endfor %}
+                        </ul>
+                        <h5>Quick Links</h5>
+                        <ul>
+                            <li><a href="#collapseUsers" data-bs-toggle="collapse" data-bs-target="#collapseUsers">Manage
+                                    Users</a></li>
+                            <li><a href="#collapseClasses" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseClasses">Manage Classes</a></li>
+                            <li><a href="#collapseSubjects" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseSubjects">Manage Subjects</a></li>
+                            <li><a href="#collapseTeachers" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTeachers">Manage Teachers</a></li>
+                            <li><a href="#collapseTimetable" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTimetable">Manage Timetables</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Manage Users Section -->
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingUsers">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
-                    Manage Users
-                </button>
-            </h2>
-            <div id="collapseUsers" class="accordion-collapse collapse" aria-labelledby="headingUsers" data-bs-parent="#adminDashboardAccordion">
-                <div class="accordion-body">
-                    <h5>Admins</h5>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in users if user.role == 'admin' %}
+            <!-- Manage Users Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingUsers">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
+                        Manage Users
+                    </button>
+                </h2>
+                <div id="collapseUsers" class="accordion-collapse collapse" aria-labelledby="headingUsers"
+                    data-bs-parent="#adminDashboardAccordion">
+                    <div class="accordion-body">
+                        <h5>Admins</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users if user.role == 'admin' %}
                                 <tr>
                                     <td>{{ user.username }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}"
+                                            class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                {% endfor %}
+                            </tbody>
+                        </table>
 
-                    <h5>Teachers</h5>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Subjects</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in users if user.role == 'teacher' %}
+                        <h5>Teachers</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Subjects</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users if user.role == 'teacher' %}
                                 <tr>
                                     <td>{{ user.username }}</td>
                                     <td>
                                         {% for subject in user.teacher.subjects %}
-                                            {{ subject.subject_name }}<br>
+                                        {{ subject.subject_name }}<br>
                                         {% endfor %}
                                     </td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}"
+                                            class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                {% endfor %}
+                            </tbody>
+                        </table>
 
-                    <h5>Students</h5>
-                    {% for class_ in classes %}
-                    <h6>{{ class_.class_name }}</h6>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in users if user.role == 'student' and user.class_id == class_.id %}
+                        <h5>Students</h5>
+                        {% for class_ in classes %}
+                        <h6>{{ class_.class_name }}</h6>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users if user.role == 'student' and user.class_id == class_.id %}
                                 <tr>
                                     <td>{{ user.username }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}"
+                                            class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    {% endfor %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endfor %}
 
-                    <!-- Add User Form -->
-                    <form method="POST" action="{{ url_for('add_user') }}" class="mt-3">
-                        <h6>Add New User</h6>
-                        <input type="text" name="username" placeholder="Username" class="form-control mb-2" required>
-                        <input type="password" name="password" placeholder="Password" class="form-control mb-2" required>
-                        <select name="role" class="form-select mb-2">
-                            <option value="admin">Admin</option>
-                            <option value="teacher">Teacher</option>
-                            <option value="student">Student</option>
-                        </select>
-                        <select name="class_id" class="form-select mb-2">
-                            {% for class_ in classes %}
+                        <!-- Add User Form -->
+                        <form method="POST" action="{{ url_for('add_user') }}" class="mt-3">
+                            <h6>Add New User</h6>
+                            <input type="text" name="username" placeholder="Username" class="form-control mb-2" required>
+                            <input type="password" name="password" placeholder="Password" class="form-control mb-2"
+                                required>
+                            <select name="role" class="form-select mb-2">
+                                <option value="admin">Admin</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="student">Student</option>
+                            </select>
+                            <select name="class_id" class="form-select mb-2">
+                                {% for class_ in classes %}
                                 <option value="{{ class_.id }}">{{ class_.class_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn-success"><i class="fas fa-user-plus"></i> Add User</button>
-                    </form>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-user-plus"></i> Add
+                                User</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Manage Classes Section -->
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingClasses">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClasses" aria-expanded="false" aria-controls="collapseClasses">
-                    Manage Classes
-                </button>
-            </h2>
-            <div id="collapseClasses" class="accordion-collapse collapse" aria-labelledby="headingClasses" data-bs-parent="#adminDashboardAccordion">
-                <div class="accordion-body">
-                    <h5>Classes</h5>
-                    <form method="POST" action="{{ url_for('add_class') }}" class="form-inline">
-                        <input type="text" name="class_name" placeholder="Class Name" class="form-control mb-2" required>
-                        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Class</button>
-                    </form>
-                    <table class="table table-striped mt-3">
-                        <thead>
-                            <tr>
-                                <th>Class Name</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for class_ in classes %}
+            <!-- Manage Classes Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingClasses">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseClasses" aria-expanded="false" aria-controls="collapseClasses">
+                        Manage Classes
+                    </button>
+                </h2>
+                <div id="collapseClasses" class="accordion-collapse collapse" aria-labelledby="headingClasses"
+                    data-bs-parent="#adminDashboardAccordion">
+                    <div class="accordion-body">
+                        <h5>Classes</h5>
+                        <form method="POST" action="{{ url_for('add_class') }}" class="form-inline">
+                            <input type="text" name="class_name" placeholder="Class Name" class="form-control mb-2"
+                                required>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Class</button>
+                        </form>
+                        <table class="table table-striped mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Class Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for class_ in classes %}
                                 <tr>
                                     <td>{{ class_.class_name }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('edit_class', class_id=class_.id) }}" class="d-inline">
-                                            <input type="text" name="class_name" value="{{ class_.class_name }}" class="form-control mb-2">
-                                            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
+                                        <form method="POST" action="{{ url_for('edit_class', class_id=class_.id) }}"
+                                            class="d-inline">
+                                            <input type="text" name="class_name" value="{{ class_.class_name }}"
+                                                class="form-control mb-2">
+                                            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i>
+                                                Edit</button>
                                         </form>
-                                        <form method="POST" action="{{ url_for('delete_class', class_id=class_.id) }}" class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                                        <form method="POST" action="{{ url_for('delete_class', class_id=class_.id) }}"
+                                            class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Manage Subjects Section -->
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingSubjects">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubjects" aria-expanded="false" aria-controls="collapseSubjects">
-                    Manage Subjects
-                </button>
-            </h2>
-            <div id="collapseSubjects" class="accordion-collapse collapse" aria-labelledby="headingSubjects" data-bs-parent="#adminDashboardAccordion">
-                <div class="accordion-body">
-                    <h5>Subjects</h5>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Subject Name</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for subject in subjects %}
+            <!-- Manage Subjects Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSubjects">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseSubjects" aria-expanded="false" aria-controls="collapseSubjects">
+                        Manage Subjects
+                    </button>
+                </h2>
+                <div id="collapseSubjects" class="accordion-collapse collapse" aria-labelledby="headingSubjects"
+                    data-bs-parent="#adminDashboardAccordion">
+                    <div class="accordion-body">
+                        <h5>Subjects</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Subject Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subject in subjects %}
                                 <tr>
                                     <td>{{ subject.subject_name }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('edit_subject', subject_id=subject.id) }}" class="d-inline">
-                                            <input type="text" name="subject_name" value="{{ subject.subject_name }}" class="form-control mb-2">
-                                            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
+                                        <form method="POST" action="{{ url_for('edit_subject', subject_id=subject.id) }}"
+                                            class="d-inline">
+                                            <input type="text" name="subject_name"
+                                                value="{{ subject.subject_name }}" class="form-control mb-2">
+                                            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i>
+                                                Edit</button>
                                         </form>
-                                        <form method="POST" action="{{ url_for('delete_subject', subject_id=subject.id) }}" class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                                        <form method="POST"
+                                            action="{{ url_for('delete_subject', subject_id=subject.id) }}"
+                                            class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    <!-- Add Subject Form -->
-                    <form method="POST" action="{{ url_for('add_subject') }}" class="mt-3">
-                        <h6>Add New Subject</h6>
-                        <input type="text" name="subject_name" placeholder="Subject Name" class="form-control mb-2" required>
-                        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Subject</button>
-                    </form>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- Add Subject Form -->
+                        <form method="POST" action="{{ url_for('add_subject') }}" class="mt-3">
+                            <h6>Add New Subject</h6>
+                            <input type="text" name="subject_name" placeholder="Subject Name" class="form-control mb-2"
+                                required>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add
+                                Subject</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Manage Teachers Section -->
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingTeachers">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTeachers" aria-expanded="false" aria-controls="collapseTeachers">
-                    Manage Teachers
-                </button>
-            </h2>
-            <div id="collapseTeachers" class="accordion-collapse collapse" aria-labelledby="headingTeachers" data-bs-parent="#adminDashboardAccordion">
-                <div class="accordion-body">
-                    <h5>Assign Teachers to Subjects</h5>
-                    <form method="POST" action="{{ url_for('assign_teacher_subject') }}" class="form-inline">
-                        <label for="teacher_id" class="form-label">Teacher:</label>
-                        <select name="teacher_id" class="form-select mb-2">
-                            {% for teacher in teachers %}
+            <!-- Manage Teachers Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTeachers">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTeachers" aria-expanded="false" aria-controls="collapseTeachers">
+                        Manage Teachers
+                    </button>
+                </h2>
+                <div id="collapseTeachers" class="accordion-collapse collapse" aria-labelledby="headingTeachers"
+                    data-bs-parent="#adminDashboardAccordion">
+                    <div class="accordion-body">
+                        <h5>Assign Teachers to Subjects</h5>
+                        <form method="POST" action="{{ url_for('assign_teacher_subject') }}" class="form-inline">
+                            <label for="teacher_id" class="form-label">Teacher:</label>
+                            <select name="teacher_id" class="form-select mb-2">
+                                {% for teacher in teachers %}
                                 <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <label for="subject_id" class="form-label">Subject:</label>
-                        <select name="subject_id" class="form-select mb-2">
-                            {% for subject in subjects %}
+                                {% endfor %}
+                            </select>
+                            <label for="subject_id" class="form-label">Subject:</label>
+                            <select name="subject_id" class="form-select mb-2">
+                                {% for subject in subjects %}
                                 <option value="{{ subject.id }}">{{ subject.subject_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn-success"><i class="fas fa-chalkboard-teacher"></i> Assign Teacher</button>
-                    </form>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-chalkboard-teacher"></i>
+                                Assign Teacher</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Timetable Section -->
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingTimetable">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTimetable" aria-expanded="false" aria-controls="collapseTimetable">
-                    Manage Timetable
-                </button>
-            </h2>
-            <div id="collapseTimetable" class="accordion-collapse collapse" aria-labelledby="headingTimetable" data-bs-parent="#adminDashboardAccordion">
-                <div class="accordion-body">
-                    <h5>Create Timetable</h5>
-                    <form method="POST" action="{{ url_for('create_timetable') }}" class="form-inline">
-                        <label for="class_id" class="form-label">Class:</label>
-                        <select name="class_id" class="form-select mb-2">
-                            {% for class_ in classes %}
+            <!-- Timetable Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTimetable">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTimetable" aria-expanded="false" aria-controls="collapseTimetable">
+                        Manage Timetable
+                    </button>
+                </h2>
+                <div id="collapseTimetable" class="accordion-collapse collapse" aria-labelledby="headingTimetable"
+                    data-bs-parent="#adminDashboardAccordion">
+                    <div class="accordion-body">
+                        <h5>Create Timetable</h5>
+                        <form method="POST" action="{{ url_for('create_timetable') }}" class="form-inline">
+                            <label for="class_id" class="form-label">Class:</label>
+                            <select name="class_id" class="form-select mb-2">
+                                {% for class_ in classes %}
                                 <option value="{{ class_.id }}">{{ class_.class_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <label for="day" class="form-label">Day:</label>
-                        <select name="day" class="form-select mb-2">
-                            <option value="Monday">Monday</option>
-                            <option value="Tuesday">Tuesday</option>
-                            <option value="Wednesday">Wednesday</option>
-                            <option value="Thursday">Thursday</option>
-                            <option value="Friday">Friday</option>
-                        </select>
-                        <label for="time_slot" class="form-label">Time Slot:</label>
-                        <input type="text" name="time_slot" class="form-control mb-2" required>
-                        <label for="subject_id" class="form-label">Subject:</label>
-                        <select name="subject_id" class="form-select mb-2">
-                            {% for subject in subjects %}
+                                {% endfor %}
+                            </select>
+                            <label for="day" class="form-label">Day:</label>
+                            <select name="day" class="form-select mb-2">
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                            </select>
+                            <label for="time_slot" class="form-label">Time Slot:</label>
+                            <input type="text" name="time_slot" class="form-control mb-2" required>
+                            <label for="subject_id" class="form-label">Subject:</label>
+                            <select name="subject_id" class="form-select mb-2">
+                                {% for subject in subjects %}
                                 <option value="{{ subject.id }}">{{ subject.subject_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <label for="teacher_id" class="form-label">Teacher:</label>
-                        <select name="teacher_id" class="form-select mb-2">
-                            {% for teacher in teachers %}
+                                {% endfor %}
+                            </select>
+                            <label for="teacher_id" class="form-label">Teacher:</label>
+                            <select name="teacher_id" class="form-select mb-2">
+                                {% for teacher in teachers %}
                                 <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn-success"><i class="fas fa-calendar-plus"></i> Create Timetable</button>
-                    </form>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-calendar-plus"></i> Create
+                                Timetable</button>
+                        </form>
 
-                    <h5>View Timetable</h5>
-                    {% for class_ in classes %}
+                        <h5>View Timetable</h5>
+                        {% for class_ in classes %}
                         <h6>Timetable for {{ class_.class_name }}</h6>
                         <table class="table table-striped mt-3">
                             <thead>
@@ -323,41 +366,45 @@
                             </thead>
                             <tbody>
                                 {% for timetable in timetables if timetable.class_id == class_.id %}
-                                    <tr>
-                                        <td>{{ timetable.day }}</td>
-                                        <td>{{ timetable.time_slot }}</td>
-                                        <td>{{ timetable.subject.subject_name }}</td>
-                                        <td>{{ timetable.teacher.teacher_name }}</td>
-                                    </tr>
+                                <tr>
+                                    <td>{{ timetable.day }}</td>
+                                    <td>{{ timetable.time_slot }}</td>
+                                    <td>{{ timetable.subject.subject_name }}</td>
+                                    <td>{{ timetable.teacher.teacher_name }}</td>
+                                </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Export PDF Section -->
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingExportPDF">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExportPDF" aria-expanded="false" aria-controls="collapseExportPDF">
-                    Export PDF
-                </button>
-            </h2>
-            <div id="collapseExportPDF" class="accordion-collapse collapse" aria-labelledby="headingExportPDF" data-bs-parent="#adminDashboardAccordion">
-                <div class="accordion-body">
-                    <h5>Export Timetable as PDF</h5>
-                    <form method="GET" action="{{ url_for('generate_timetable_report_route') }}">
-                        <button type="submit" class="btn btn-warning"><i class="fas fa-file-pdf"></i> Export PDF</button>
-                    </form>
+            <!-- Export PDF Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingExportPDF">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseExportPDF" aria-expanded="false" aria-controls="collapseExportPDF">
+                        Export PDF
+                    </button>
+                </h2>
+                <div id="collapseExportPDF" class="accordion-collapse collapse" aria-labelledby="headingExportPDF"
+                    data-bs-parent="#adminDashboardAccordion">
+                    <div class="accordion-body">
+                        <h5>Export Timetable as PDF</h5>
+                        <form method="GET" action="{{ url_for('generate_timetable_report_route') }}">
+                            <button type="submit" class="btn btn-warning"><i class="fas fa-file-pdf"></i> Export
+                                PDF</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
-</div>
 
-<!-- Include Bootstrap Bundle (includes Popper.js) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Include Bootstrap Bundle (includes Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
