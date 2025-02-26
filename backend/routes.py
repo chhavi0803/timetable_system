@@ -66,7 +66,14 @@ def init_routes(app):
         subjects = Subject.query.all()
         timetables = Timetable.query.all()
 
-        return render_template('admin_dashboard.html', users=users, classes=classes, teachers=teachers, subjects=subjects, timetables=timetables)
+        total_users = len(users)
+        total_classes = len(classes)
+        total_subjects = len(subjects)
+        total_timetables = len(timetables)
+        recent_logs = []  # Implement logic for recent logs if needed
+
+        return render_template('admin_dashboard.html', users=users, classes=classes, teachers=teachers, subjects=subjects, timetables=timetables,
+                               total_users=total_users, total_classes=total_classes, total_subjects=total_subjects, total_timetables=total_timetables, recent_logs=recent_logs)
 
     @app.route('/admin/add_user', methods=['POST'])
     def add_user():
@@ -295,6 +302,23 @@ def init_routes(app):
             flash('An error occurred while deleting the timetable. Please try again.', 'error')
         return redirect(url_for('admin_dashboard'))
 
+    @app.route('/admin/assign_teacher_subject', methods=['POST'])
+    def assign_teacher_subject():
+        if session.get('user_role') != 'admin':
+            return redirect(url_for('index'))
+        teacher_id = request.form['teacher_id']
+        subject_id = request.form['subject_id']
+        teacher = Teacher.query.get(teacher_id)
+        subject = Subject.query.get(subject_id)
+        teacher.subjects.append(subject)
+        try:
+            db.session.commit()
+            flash('Teacher assigned to subject successfully.', 'success')
+        except IntegrityError:
+            db.session.rollback()
+            flash('An error occurred while assigning the teacher. Please try again.', 'error')
+        return redirect(url_for('admin_dashboard'))
+
     @app.route('/admin/generate_conflict_report', methods=['GET'])
     def generate_conflict_report_route():
         if session.get('user_role') != 'admin':
@@ -321,6 +345,9 @@ def init_routes(app):
             return redirect(url_for('index'))
         user_id = session.get('user_id')
         teacher = Teacher.query.filter_by(user_id=user_id).first()
+        if teacher is None:
+            flash('Teacher not found.', 'error')
+            return redirect(url_for('index'))
         timetables = Timetable.query.filter_by(teacher_id=teacher.id).all()
         return render_template('teacher_dashboard.html', timetables=timetables)
 
@@ -341,7 +368,7 @@ def init_routes(app):
         user_id = session.get('user_id')
         student = User.query.get(user_id)
         timetables = Timetable.query.filter_by(class_id=student.class_id).all()
-        return render_template('student_dashboard.html', timetables=timetables)
+        return render_template('student_dashboard.html', student=student, timetables=timetables)
 
     @app.route('/logout')
     def logout():

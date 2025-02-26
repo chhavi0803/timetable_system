@@ -22,6 +22,34 @@
         <form method="GET" action="{{ url_for('generate_pdf_route') }}">
             <button type="submit">Download PDF</button>
         </form>
+
+        <h2>Class Information</h2>
+        <p>Class Name: {{ student.class_.class_name }}</p>
+        <p>Assigned Teachers:</p>
+        <ul>
+        {% for teacher in student.class_.teachers %}
+            <li>{{ teacher.teacher_name }}</li>
+        {% endfor %}
+        </ul>
+
+        <h2>Notifications</h2>
+        <ul>
+        {% for notification in notifications %}
+            <li>{{ notification.message }}</li>
+        {% endfor %}
+        </ul>
+
+        <h2>User Profile</h2>
+        <p>Username: {{ student.username }}</p>
+        <p>Role: {{ student.role }}</p>
+        <p>Email: {{ student.email }}</p>
+
+        <h2>Contact Information</h2>
+        <ul>
+        {% for teacher in student.class_.teachers %}
+            <li>{{ teacher.teacher_name }} - {{ teacher.email }}</li>
+        {% endfor %}
+        </ul>
     </div>
 </body>
 </html>

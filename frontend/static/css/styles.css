@@ -1,115 +1,43 @@
-/* Body and container styling */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+    background-color: #f8f9fa;
+    color: #343a40;
 }
 
 header {
-    background-color: #333;
-    color: white;
+    background-color: #343a40;
+    color: #fff;
     padding: 10px 0;
     text-align: center;
 }
 
-/* Container for the content */
 .container {
-    width: 80%;
-    margin: 20px auto;
+    margin: 20px;
 }
 
-/* Form styling */
-form {
-    background: white;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+h1, h2 {
+    color: #007bff;
 }
 
-/* Input and button fields */
-form input, form select, form button {
-    display: block;
+table {
     width: 100%;
-    margin: 10px 0;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    margin-bottom: 20px;
+    border-collapse: collapse;
 }
 
-/* Specific styling for buttons */
-form button {
-    background: #4CAF50;  /* Green background */
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s ease, transform 0.3s ease;  /* Smooth transition for hover effect */
-    padding: 12px;
+table, th, td {
+    border: 1px solid #dee2e6;
 }
 
-/* Hover effect for buttons */
-form button:hover {
-    background: #45a049;  /* Slightly darker green */
-    transform: scale(1.05);  /* Slightly increase size */
-}
-
-/* Active (click) effect */
-form button:active {
-    background: #3e8e41;  /* Darker green when clicked */
-    transform: scale(1.02);  /* Slightly shrink when clicked */
-}
-
-/* Styling for button icons */
-form button i {
-    margin-right: 8px;
-}
-
-/* Styling for other elements inside the form */
-form input, form select {
-    font-size: 16px;
-}
-
-/* Header styling */
-h1, h2, h3 {
-    color: #333;
-}
-
-/* List and item styling for users, classes, and subjects */
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-ul li {
+th, td {
     padding: 8px;
-    border-bottom: 1px solid #ddd;
+    text-align: left;
 }
 
-ul li form {
-    display: inline-block;
-    margin: 5px;
+th {
+    background-color: #f8f9fa;
 }
 
-/* Flash messages */
-.flashes {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
+button {
+    margin: 5px 0;
 }
-
-.flashes li {
-    padding: 5px;
-}
-
-.success {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-}
-
-.error {
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-}
-

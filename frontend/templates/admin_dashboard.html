@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -14,49 +13,62 @@
     <h2>Admin Dashboard</h2>
     <div class="accordion" id="adminDashboardAccordion">
         
+        <!-- Overview/Summary Section -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOverview">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOverview" aria-expanded="true" aria-controls="collapseOverview">
+                    Overview/Summary
+                </button>
+            </h2>
+            <div id="collapseOverview" class="accordion-collapse collapse show" aria-labelledby="headingOverview" data-bs-parent="#adminDashboardAccordion">
+                <div class="accordion-body">
+                    <h5>System Metrics</h5>
+                    <ul>
+                        <li>Total Users: {{ total_users }}</li>
+                        <li>Total Classes: {{ total_classes }}</li>
+                        <li>Total Subjects: {{ total_subjects }}</li>
+                        <li>Total Timetables: {{ total_timetables }}</li>
+                    </ul>
+                    <h5>Recent Activity Logs</h5>
+                    <ul>
+                        {% for log in recent_logs %}
+                            <li>{{ log }}</li>
+                        {% endfor %}
+                    </ul>
+                    <h5>Quick Links</h5>
+                    <ul>
+                        <li><a href="#collapseUsers">Manage Users</a></li>
+                        <li><a href="#collapseClasses">Manage Classes</a></li>
+                        <li><a href="#collapseSubjects">Manage Subjects</a></li>
+                        <li><a href="#collapseTeachers">Manage Teachers</a></li>
+                        <li><a href="#collapseTimetable">Manage Timetables</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- Manage Users Section -->
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingUsers">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="true" aria-controls="collapseUsers">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
                     Manage Users
                 </button>
             </h2>
-            <div id="collapseUsers" class="accordion-collapse collapse show" aria-labelledby="headingUsers" data-bs-parent="#adminDashboardAccordion">
+            <div id="collapseUsers" class="accordion-collapse collapse" aria-labelledby="headingUsers" data-bs-parent="#adminDashboardAccordion">
                 <div class="accordion-body">
-                    <h5>Users</h5>
+                    <h5>Admins</h5>
                     <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th>Username</th>
-                                <th>Role</th>
-                                <th>Class</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for user in users %}
+                            {% for user in users if user.role == 'admin' %}
                                 <tr>
                                     <td>{{ user.username }}</td>
-                                    <td>{{ user.role }}</td>
-                                    <td>{{ user.class_.class_name if user.class_ else '' }}</td>
                                     <td>
-                                        <!-- Edit User Form -->
-                                        <form method="POST" action="{{ url_for('edit_user', user_id=user.id) }}" class="d-inline">
-                                            <input type="text" name="username" value="{{ user.username }}" class="form-control mb-2">
-                                            <select name="role" class="form-select mb-2">
-                                                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-                                                <option value="teacher" {% if user.role == 'teacher' %}selected{% endif %}>Teacher</option>
-                                                <option value="student" {% if user.role == 'student' %}selected{% endif %}>Student</option>
-                                            </select>
-                                            <select name="class_id" class="form-select mb-2">
-                                                {% for class_ in classes %}
-                                                    <option value="{{ class_.id }}" {% if user.class_id == class_.id %}selected{% endif %}>{{ class_.class_name }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
-                                        </form>
-
-                                        <!-- Delete User Form -->
                                         <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline mt-2">
                                             <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
@@ -65,6 +77,59 @@
                             {% endfor %}
                         </tbody>
                     </table>
+
+                    <h5>Teachers</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Subjects</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users if user.role == 'teacher' %}
+                                <tr>
+                                    <td>{{ user.username }}</td>
+                                    <td>
+                                        {% for subject in user.teacher.subjects %}
+                                            {{ subject.subject_name }}<br>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <h5>Students</h5>
+                    {% for class_ in classes %}
+                    <h6>{{ class_.class_name }}</h6>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users if user.role == 'student' and user.class_id == class_.id %}
+                                <tr>
+                                    <td>{{ user.username }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endfor %}
 
                     <!-- Add User Form -->
                     <form method="POST" action="{{ url_for('add_user') }}" class="mt-3">
@@ -101,7 +166,6 @@
                         <input type="text" name="class_name" placeholder="Class Name" class="form-control mb-2" required>
                         <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Class</button>
                     </form>
-
                     <table class="table table-striped mt-3">
                         <thead>
                             <tr>
@@ -164,7 +228,6 @@
                             {% endfor %}
                         </tbody>
                     </table>
-
                     <!-- Add Subject Form -->
                     <form method="POST" action="{{ url_for('add_subject') }}" class="mt-3">
                         <h6>Add New Subject</h6>
@@ -213,7 +276,7 @@
             </h2>
             <div id="collapseTimetable" class="accordion-collapse collapse" aria-labelledby="headingTimetable" data-bs-parent="#adminDashboardAccordion">
                 <div class="accordion-body">
-                    <h5>Timetable</h5>
+                    <h5>Create Timetable</h5>
                     <form method="POST" action="{{ url_for('create_timetable') }}" class="form-inline">
                         <label for="class_id" class="form-label">Class:</label>
                         <select name="class_id" class="form-select mb-2">
@@ -246,37 +309,30 @@
                         <button type="submit" class="btn btn-success"><i class="fas fa-calendar-plus"></i> Create Timetable</button>
                     </form>
 
-                    <table class="table table-striped mt-3">
-                        <thead>
-                            <tr>
-                                <th>Class</th>
-                                <th>Day</th>
-                                <th>Time Slot</th>
-                                <th>Subject</th>
-                                <th>Teacher</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for timetable in timetables %}
+                    <h5>View Timetable</h5>
+                    {% for class_ in classes %}
+                        <h6>Timetable for {{ class_.class_name }}</h6>
+                        <table class="table table-striped mt-3">
+                            <thead>
                                 <tr>
-                                    <td>{{ timetable.class_.class_name }}</td>
-                                    <td>{{ timetable.day }}</td>
-                                    <td>{{ timetable.time_slot }}</td>
-                                    <td>{{ timetable.subject.subject_name }}</td>
-                                    <td>{{ timetable.teacher.teacher_name }}</td>
-                                    <td>
-                                        <form method="POST" action="{{ url_for('edit_timetable', timetable_id=timetable.id) }}" class="d-inline">
-                                            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</button>
-                                        </form>
-                                        <form method="POST" action="{{ url_for('delete_timetable', timetable_id=timetable.id) }}" class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
-                                        </form>
-                                    </td>
+                                    <th>Day</th>
+                                    <th>Time Slot</th>
+                                    <th>Subject</th>
+                                    <th>Teacher</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for timetable in timetables if timetable.class_id == class_.id %}
+                                    <tr>
+                                        <td>{{ timetable.day }}</td>
+                                        <td>{{ timetable.time_slot }}</td>
+                                        <td>{{ timetable.subject.subject_name }}</td>
+                                        <td>{{ timetable.teacher.teacher_name }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -291,7 +347,7 @@
             <div id="collapseExportPDF" class="accordion-collapse collapse" aria-labelledby="headingExportPDF" data-bs-parent="#adminDashboardAccordion">
                 <div class="accordion-body">
                     <h5>Export Timetable as PDF</h5>
-                    <form method="POST" action="{{ url_for('generate_timetable_report_route') }}">
+                    <form method="GET" action="{{ url_for('generate_timetable_report_route') }}">
                         <button type="submit" class="btn btn-warning"><i class="fas fa-file-pdf"></i> Export PDF</button>
                     </form>
                 </div>

@@ -1,5 +1,11 @@
 from database import db
 
+# Association table for the many-to-many relationship between Teacher and Subject
+teacher_subject = db.Table('teacher_subject',
+    db.Column('teacher_id', db.Integer, db.ForeignKey('teacher.id'), primary_key=True),
+    db.Column('subject_id', db.Integer, db.ForeignKey('subject.id'), primary_key=True)
+)
+
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -8,6 +14,7 @@ class User(db.Model):
     role = db.Column(db.Enum('admin', 'teacher', 'student'), nullable=False)
     class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=True)
     class_ = db.relationship('Class', backref='students', lazy=True)
+    teacher = db.relationship('Teacher', backref='user', uselist=False)
 
 class Teacher(db.Model):
     __tablename__ = 'teacher'
@@ -16,6 +23,8 @@ class Teacher(db.Model):
     teacher_name = db.Column(db.String(50), nullable=False)
     class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=True)
     class_ = db.relationship('Class', backref='teachers', lazy=True)
+    subjects = db.relationship('Subject', secondary=teacher_subject, lazy='subquery',
+        backref=db.backref('teachers', lazy=True))
 
 class Class(db.Model):
     __tablename__ = 'class'
