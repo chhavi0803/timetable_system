@@ -61,3 +61,53 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+/* Flash Message Styles */
+.alert-container {
+    margin-top: 20px;
+    padding: 10px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.alert-success {
+    background-color: #28a745; /* Green for success */
+    color: white;
+}
+
+.alert-error {
+    background-color: #dc3545; /* Red for error */
+    color: white;
+}
+
+.alert-info {
+    background-color: #17a2b8; /* Blue for info */
+    color: white;
+}
+
+.alert-warning {
+    background-color: #ffc107; /* Yellow for warnings */
+    color: black;
+}
+
+.alert-dismissible {
+    padding-right: 50px;
+}
+
+.alert-dismissible .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: white;
+    font-size: 1.3em;
+    cursor: pointer;
+}

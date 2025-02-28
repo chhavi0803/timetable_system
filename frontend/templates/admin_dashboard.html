@@ -11,6 +11,22 @@
     <div class="container mt-4">
         <h2>Admin Dashboard</h2>
         <div class="accordion" id="adminDashboardAccordion">
+                <!-- Flash Messages Section -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% endwith %}
+
             <!-- Overview/Summary Section -->
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOverview">
@@ -37,16 +53,11 @@
                         </ul>
                         <h5>Quick Links</h5>
                         <ul>
-                            <li><a href="#collapseUsers" data-bs-toggle="collapse" data-bs-target="#collapseUsers">Manage
-                                    Users</a></li>
-                            <li><a href="#collapseClasses" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseClasses">Manage Classes</a></li>
-                            <li><a href="#collapseSubjects" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseSubjects">Manage Subjects</a></li>
-                            <li><a href="#collapseTeachers" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseTeachers">Manage Teachers</a></li>
-                            <li><a href="#collapseTimetable" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseTimetable">Manage Timetables</a></li>
+                            <li><a href="#collapseUsers" data-bs-toggle="collapse" data-bs-target="#collapseUsers">Manage Users</a></li>
+                            <li><a href="#collapseClasses" data-bs-toggle="collapse" data-bs-target="#collapseClasses">Manage Classes</a></li>
+                            <li><a href="#collapseSubjects" data-bs-toggle="collapse" data-bs-target="#collapseSubjects">Manage Subjects</a></li>
+                            <li><a href="#collapseTeachers" data-bs-toggle="collapse" data-bs-target="#collapseTeachers">Manage Teachers</a></li>
+                            <li><a href="#collapseTimetable" data-bs-toggle="collapse" data-bs-target="#collapseTimetable">Manage Timetables</a></li>
                         </ul>
                     </div>
                 </div>
@@ -67,6 +78,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>User ID</th> <!-- New column for User ID -->
                                     <th>Username</th>
                                     <th>Actions</th>
                                 </tr>
@@ -74,12 +86,11 @@
                             <tbody>
                                 {% for user in users if user.role == 'admin' %}
                                 <tr>
+                                    <td>{{ user.user_id }}</td> <!-- Display user_id -->
                                     <td>{{ user.username }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}"
-                                            class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i
-                                                    class="fas fa-trash-alt"></i> Delete</button>
+                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.user_id) }}" class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -91,6 +102,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>User ID</th> <!-- New column for User ID -->
                                     <th>Username</th>
                                     <th>Actions</th>
                                 </tr>
@@ -98,12 +110,11 @@
                             <tbody>
                                 {% for user in users if user.role == 'teacher' %}
                                 <tr>
+                                    <td>{{ user.user_id }}</td> <!-- Display user_id -->
                                     <td>{{ user.username }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}"
-                                            class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i
-                                                    class="fas fa-trash-alt"></i> Delete</button>
+                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.user_id) }}" class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -115,6 +126,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>User ID</th> <!-- New column for User ID -->
                                     <th>Username</th>
                                     <th>Actions</th>
                                 </tr>
@@ -122,12 +134,11 @@
                             <tbody>
                                 {% for user in users if user.role == 'student' %}
                                 <tr>
+                                    <td>{{ user.user_id }}</td> <!-- Display user_id -->
                                     <td>{{ user.username }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}"
-                                            class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i
-                                                    class="fas fa-trash-alt"></i> Delete</button>
+                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.user_id) }}" class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -139,25 +150,23 @@
                         <form method="POST" action="{{ url_for('add_user') }}" class="mt-3">
                             <h6>Add New User</h6>
                             <input type="text" name="username" placeholder="Username" class="form-control mb-2" required>
-                            <input type="password" name="password" placeholder="Password" class="form-control mb-2"
-                                required>
+                            <input type="password" name="password" placeholder="Password" class="form-control mb-2" required>
                             <select name="role" class="form-select mb-2">
                                 <option value="admin">Admin</option>
                                 <option value="teacher">Teacher</option>
                                 <option value="student">Student</option>
                             </select>
-                            <button type="submit" class="btn btn-success"><i class="fas fa-user-plus"></i> Add
-                                User</button>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-user-plus"></i> Add User</button>
                         </form>
                     </div>
                 </div>
             </div>
-
+            
             <!-- Manage Classes Section -->
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingClasses">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseClasses" aria-expanded="false" aria-controls="collapseClasses">
+                            data-bs-target="#collapseClasses" aria-expanded="false" aria-controls="collapseClasses">
                         Manage Classes
                     </button>
                 </h2>
@@ -165,14 +174,15 @@
                     data-bs-parent="#adminDashboardAccordion">
                     <div class="accordion-body">
                         <h5>Classes</h5>
+                        <!-- Form to add a new class -->
                         <form method="POST" action="{{ url_for('add_class') }}" class="form-inline">
-                            <input type="text" name="class_name" placeholder="Class Name" class="form-control mb-2"
-                                required>
+                            <input type="text" name="class_name" placeholder="Class Name" class="form-control mb-2" required>
                             <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Class</button>
                         </form>
                         <table class="table table-striped mt-3">
                             <thead>
                                 <tr>
+                                    <th>Class ID</th>  <!-- Added Class ID column -->
                                     <th>Class Name</th>
                                     <th>Actions</th>
                                 </tr>
@@ -180,19 +190,18 @@
                             <tbody>
                                 {% for class_ in classes %}
                                 <tr>
+                                    <td>{{ class_.id }}</td>  <!-- Displaying Class ID -->
                                     <td>{{ class_.class_name }}</td>
                                     <td>
-                                        <form method="POST" action="{{ url_for('edit_class', class_id=class_.id) }}"
-                                            class="d-inline">
-                                            <input type="text" name="class_name" value="{{ class_.class_name }}"
-                                                class="form-control mb-2">
-                                            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i>
-                                                Edit</button>
+                                        <!-- Edit form for the class -->
+                                        <form method="POST" action="{{ url_for('edit_class', class_name=class_.class_name) }}" class="d-inline">
+                                            <input type="text" name="class_name" value="{{ class_.class_name }}" class="form-control mb-2" required>
+                                            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save</button>
                                         </form>
-                                        <form method="POST" action="{{ url_for('delete_class', class_id=class_.id) }}"
-                                            class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i
-                                                    class="fas fa-trash-alt"></i> Delete</button>
+
+                                        <!-- Delete form for the class -->
+                                        <form method="POST" action="{{ url_for('delete_class', class_name=class_.class_name) }}" class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -202,6 +211,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Manage Subjects Section -->
             <div class="accordion-item">
@@ -215,9 +225,18 @@
                     data-bs-parent="#adminDashboardAccordion">
                     <div class="accordion-body">
                         <h5>Subjects</h5>
-                        <table class="table table-striped">
+                        <!-- Form to add a new subject -->
+                        <form method="POST" action="{{ url_for('add_subject') }}" class="form-inline">
+                            <input type="text" name="subject_code" placeholder="Subject Code" class="form-control mb-2" required>
+                            <!-- Input field for subject name -->
+                            <input type="text" name="subject_name" placeholder="Subject Name" class="form-control mb-2" required>
+                            <!-- Submit button to add subject -->
+                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Subject</button>
+                        </form>
+                        <table class="table table-striped mt-3">
                             <thead>
                                 <tr>
+                                    <th>Subject Code</th> <!-- Change header to Subject Code -->
                                     <th>Subject Name</th>
                                     <th>Actions</th>
                                 </tr>
@@ -225,37 +244,33 @@
                             <tbody>
                                 {% for subject in subjects %}
                                 <tr>
-                                    <td>{{ subject.subject_name }}</td>
+                                    <td>{{ subject.subject_code }}</td> <!-- Display subject_code -->
+                                    <td>{{ subject.subject_name }}</td> <!-- Display subject_name -->
                                     <td>
-                                        <form method="POST" action="{{ url_for('edit_subject', subject_id=subject.id) }}"
-                                            class="d-inline">
-                                            <input type="text" name="subject_name"
-                                                value="{{ subject.subject_name }}" class="form-control mb-2">
-                                            <button type="submit" class="btn btn-primary"><i class="fas fa-edit"></i>
-                                                Edit</button>
+                                        <!-- Edit form for the subject -->
+                                        <form method="POST" action="{{ url_for('edit_subject', subject_code=subject.subject_code) }}">
+                                            <!-- Editable Subject Code -->
+                                            <input type="text" name="subject_code" value="{{ subject.subject_code }}" class="form-control mb-2" required>
+
+                                            <!-- Editable Subject Name -->
+                                            <input type="text" name="subject_name" value="{{ subject.subject_name }}" class="form-control mb-2" required>
+
+                                            <!-- Save button to submit the form -->
+                                            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save</button>
                                         </form>
-                                        <form method="POST"
-                                            action="{{ url_for('delete_subject', subject_id=subject.id) }}"
-                                            class="d-inline mt-2">
-                                            <button type="submit" class="btn btn-danger"><i
-                                                    class="fas fa-trash-alt"></i> Delete</button>
+                                        <!-- Delete form for the subject -->
+                                        <form method="POST" action="{{ url_for('delete_subject', subject_code=subject.subject_code) }}" class="d-inline mt-2">
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
                                         </form>
                                     </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
-                        <!-- Add Subject Form -->
-                        <form method="POST" action="{{ url_for('add_subject') }}" class="mt-3">
-                            <h6>Add New Subject</h6>
-                            <input type="text" name="subject_name" placeholder="Subject Name" class="form-control mb-2"
-                                required>
-                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add
-                                Subject</button>
-                        </form>
                     </div>
                 </div>
             </div>
+
 
             <!-- Manage Teachers Section -->
             <div class="accordion-item">
@@ -269,99 +284,171 @@
                     data-bs-parent="#adminDashboardAccordion">
                     <div class="accordion-body">
                         <h5>Assign Teachers to Subjects</h5>
+                        <!-- Assign Teacher Form -->
                         <form method="POST" action="{{ url_for('assign_teacher_subject') }}" class="form-inline">
-                            <label for="teacher_id" class="form-label">Teacher:</label>
-                            <select name="teacher_id" class="form-select mb-2">
-                                {% for teacher in teachers %}
-                                <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option>
-                                {% endfor %}
-                            </select>
-                            <label for="subject_id" class="form-label">Subject:</label>
-                            <select name="subject_id" class="form-select mb-2">
+                            <!-- Subject Dropdown Header -->
+                            <label for="subject_name" class="form-label"><strong>Select Subject</strong></label>
+                            <select name="subject_name" class="form-select mb-2" id="subject_name" required>
                                 {% for subject in subjects %}
-                                <option value="{{ subject.id }}">{{ subject.subject_name }}</option>
+                                    <option value="{{ subject.subject_name }}">{{ subject.subject_name }}</option> <!-- Changed to subject_name -->
                                 {% endfor %}
                             </select>
-                            <button type="submit" class="btn btn-success"><i class="fas fa-chalkboard-teacher"></i>
-                                Assign Teacher</button>
+
+                            <!-- Teacher Dropdown Header -->
+                            <label for="teacher_id" class="form-label mt-2"><strong>Select Teacher</strong></label>
+                            <select name="teacher_id" class="form-select mb-2" id="teacher_id" required>
+                                {% for teacher in teachers %}
+                                    <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option> <!-- Using teacher_name -->
+                                {% endfor %}
+                            </select>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-success mt-2"><i class="fas fa-check"></i> Assign Teacher</button>
                         </form>
+                        <h5 class="mt-4">Current Teacher Assignments</h5>
+                        <table class="table table-striped mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Teacher</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assignment in teacher_assignments %}
+                                <tr>
+                                    <td>{{ assignment.subject_name }}</td>
+                                    <td>{{ assignment.teacher_username }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('remove_teacher_assignment', assignment_id=assignment.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Remove</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Timetable Section -->
+            <!-- Timetable Management Section -->
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingTimetable">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseTimetable" aria-expanded="false" aria-controls="collapseTimetable">
-                        Manage Timetable
+                            data-bs-target="#collapseTimetable" aria-expanded="false" aria-controls="collapseTimetable">
+                        Manage Timetables
                     </button>
                 </h2>
                 <div id="collapseTimetable" class="accordion-collapse collapse" aria-labelledby="headingTimetable"
                     data-bs-parent="#adminDashboardAccordion">
                     <div class="accordion-body">
                         <h5>Create Timetable</h5>
-                        <form method="POST" action="{{ url_for('create_timetable') }}" class="form-inline">
-                            <label for="class_id" class="form-label">Class:</label>
-                            <select name="class_id" class="form-select mb-2">
-                                {% for class_ in classes %}
-                                <option value="{{ class_.id }}">{{ class_.class_name }}</option>
-                                {% endfor %}
-                            </select>
-                            <label for="day" class="form-label">Day:</label>
-                            <select name="day" class="form-select mb-2">
-                                <option value="Monday">Monday</option>
-                                <option value="Tuesday">Tuesday</option>
-                                <option value="Wednesday">Wednesday</option>
-                                <option value="Thursday">Thursday</option>
-                                <option value="Friday">Friday</option>
-                            </select>
-                            <label for="time_slot" class="form-label">Time Slot:</label>
-                            <input type="text" name="time_slot" class="form-control mb-2" required>
-                            <label for="subject_id" class="form-label">Subject:</label>
-                            <select name="subject_id" class="form-select mb-2">
-                                {% for subject in subjects %}
-                                <option value="{{ subject.id }}">{{ subject.subject_name }}</option>
-                                {% endfor %}
-                            </select>
-                            <label for="teacher_id" class="form-label">Teacher:</label>
-                            <select name="teacher_id" class="form-select mb-2">
-                                {% for teacher in teachers %}
-                                <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option>
-                                {% endfor %}
-                            </select>
-                            <button type="submit" class="btn btn-success"><i class="fas fa-calendar-plus"></i> Create
-                                Timetable</button>
-                        </form>
+                        <form method="POST" action="{{ url_for('create_timetable') }}">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="class_name" class="form-label"><strong>Select Class</strong></label>
+                                    <select name="class_name" class="form-select mb-2" id="class_name" required>
+                                        {% for class_ in classes %}
+                                            <option value="{{ class_.class_name }}">{{ class_.class_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="subject_name" class="form-label"><strong>Select Subject</strong></label>
+                                    <select name="subject_name" class="form-select mb-2" id="subject_name" required>
+                                        {% for subject in subjects %}
+                                            <option value="{{ subject.subject_name }}">{{ subject.subject_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="teacher_id" class="form-label"><strong>Select Teacher</strong></label>
+                                    <select name="teacher_id" class="form-select mb-2" id="teacher_id" required>
+                                        {% for teacher in teachers %}
+                                            <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option>
+                                        {% else %}
+                                            <option value="">No teachers available</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
 
-                        <h5>View Timetable</h5>
-                        {% for class_ in classes %}
-                        <h6>Timetable for {{ class_.class_name }}</h6>
+                            <!-- Add Day Dropdown Header -->
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <label for="day" class="form-label"><strong>Select Day</strong></label>
+                                    <select name="day" class="form-select mb-2" id="day" required>
+                                        <option value="Monday">Monday</option>
+                                        <option value="Tuesday">Tuesday</option>
+                                        <option value="Wednesday">Wednesday</option>
+                                        <option value="Thursday">Thursday</option>
+                                        <option value="Friday">Friday</option>
+                                    </select>
+                                </div>
+
+                                <!-- Time Slot Dropdown Header -->
+                                <div class="col">
+                                    <label for="timeslot" class="form-label"><strong>Select Time Slot</strong></label>
+                                    <select name="time_slot" class="form-select mb-2" id="time_slot" required>
+                                        <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
+                                        <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                                        <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
+                                        <option value="12:00 PM - 1:00 PM">12:00 PM - 1:00 PM</option>
+                                        <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
+                                        <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
+                                        <option value="4:00 PM - 5:00 PM">4:00 PM - 5:00 PM</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-success mt-3"><i class="fas fa-calendar"></i> Create Timetable</button>
+                        </form>
+                        <!-- <h5 class="mt-4">View and Edit Timetables</h5> -->
+                        <h5>View and Edit Timetables</h5>
+                        <p>Timetables Data: {{ timetables_data }}</p>
                         <table class="table table-striped mt-3">
                             <thead>
                                 <tr>
-                                    <th>Day</th>
-                                    <th>Time Slot</th>
+                                    <th>Class Name</th>
                                     <th>Subject</th>
                                     <th>Teacher</th>
+                                    <th>Day</th>
+                                    <th>Time Slot</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for timetable in timetables if timetable.class_id == class_.id %}
-                                <tr>
-                                    <td>{{ timetable.day }}</td>
-                                    <td>{{ timetable.time_slot }}</td>
-                                    <td>{{ timetable.subject.subject_name }}</td>
-                                    <td>{{ timetable.teacher.teacher_name }}</td>
-                                </tr>
-                                {% endfor %}
+                                {% if timetables_data %}
+                                    {% for timetable, class_, subject, teacher in timetables_data %}
+                                        <tr>
+                                            <td>{{ class_.class_name }}</td>
+                                            <td>{{ subject.subject_name }}</td>
+                                            <td>{{ teacher.teacher_name }}</td>
+                                            <td>{{ timetable.day }}</td>
+                                            <td>{{ timetable.time_slot }}</td>
+                                            <td>
+                                                <form method="POST" action="{{ url_for('edit_timetable', timetable_id=timetable.id) }}" class="d-inline">
+                                                    <button type="submit" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</button>
+                                                </form>
+                                                <form method="POST" action="{{ url_for('delete_timetable', timetable_id=timetable.id) }}" class="d-inline mt-2">
+                                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6">No timetables found</td>
+                                    </tr>
+                                {% endif %}
                             </tbody>
                         </table>
-                        {% endfor %}
                     </div>
                 </div>
             </div>
-
+            
             <!-- Export PDF Section -->
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingExportPDF">
