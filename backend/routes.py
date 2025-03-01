@@ -67,12 +67,12 @@ def init_routes(app):
     def admin_dashboard():  
         if session.get('user_role') != 'admin':  
             return redirect(url_for('index'))  
-  
+    
         users = User.query.all()  
         classes = Class.query.all()  
         teachers = Teacher.query.all()  
         subjects = Subject.query.all()  
-  
+    
         teacher_assignments = db.session.query(  
             teacher_subject.c.teacher_id,  
             teacher_subject.c.subject_code,  
@@ -83,14 +83,14 @@ def init_routes(app):
         ).join(  
             Subject, teacher_subject.c.subject_code == Subject.subject_code  
         ).all()  
-  
+    
         total_users = len(users)  
         total_classes = len(classes)  
         total_subjects = len(subjects)  
         total_timetables = len(Timetable.query.all())  
-  
+    
         recent_logs = []  
-  
+    
         try:  
             timetables_data = db.session.query(  
                 Timetable, Class, Subject, Teacher  
@@ -104,7 +104,7 @@ def init_routes(app):
         except Exception as e:  
             print(f"An error occurred: {e}")  
             timetables_data = []  
-  
+    
         return render_template(  
             'admin_dashboard.html',  
             users=users,  
@@ -119,6 +119,7 @@ def init_routes(app):
             teacher_assignments=teacher_assignments,  
             timetables_data=timetables_data  
         )  
+
 
     @app.route('/admin/add_user', methods=['POST'])
     def add_user():
@@ -423,25 +424,25 @@ def init_routes(app):
             flash('Assignment not found.', 'error')  
   
         return redirect(url_for('admin_dashboard'))  
-  
+
     @app.route('/admin/reassign_teacher_subjects', methods=['POST'])  
     def reassign_teacher_subjects():  
         if session.get('user_role') != 'admin':  
             return redirect(url_for('index'))  
-  
+    
         old_teacher_id = request.form['old_teacher_id']  
         new_teacher_name = request.form['new_teacher_name']  
-  
+    
         new_teacher = Teacher.query.filter_by(teacher_name=new_teacher_name).first()  
-  
+    
         if not new_teacher:  
             flash('New teacher not found.', 'error')  
             return redirect(url_for('admin_dashboard'))  
-  
+    
         assignments = db.session.query(teacher_subject).filter(  
             teacher_subject.c.teacher_id == old_teacher_id  
         ).all()  
-  
+    
         if assignments:  
             try:  
                 for assignment in assignments:  
@@ -451,6 +452,11 @@ def init_routes(app):
                             teacher_subject.c.subject_code == assignment.subject_code  
                         ).values(teacher_id=new_teacher.id)  
                     )  
+                    # Update the timetable entries as well  
+                    timetables = Timetable.query.filter_by(teacher_id=old_teacher_id, subject_code=assignment.subject_code).all()  
+                    for timetable in timetables:  
+                        timetable.teacher_id = new_teacher.id  
+                        db.session.commit()  
                 db.session.commit()  
                 flash('All subjects reassigned successfully.', 'success')  
             except IntegrityError:  
@@ -458,8 +464,9 @@ def init_routes(app):
                 flash('An error occurred while reassigning the subjects. Please try again.', 'error')  
         else:  
             flash('No assignments found for the old teacher.', 'error')  
-  
+    
         return redirect(url_for('admin_dashboard'))  
+
   
     @app.route('/admin/view_timetables')  
     def view_timetables():  
@@ -601,22 +608,26 @@ def init_routes(app):
             return redirect(url_for('index'))  
     
         new_subject_name = request.form['subject_name']  
-        
-        # Find the subject by code  
         subject = Subject.query.filter_by(subject_code=subject_code).first()  
-        
+    
         if subject:  
             try:  
-                # Update the subject's name  
                 subject.subject_name = new_subject_name  
                 db.session.commit()  
-                flash('Subject name updated successfully.', 'success')  
+    
+                # Update the timetables as well  
+                timetables = Timetable.query.filter_by(teacher_id=teacher_id, subject_code=subject_code).all()  
+                for timetable in timetables:  
+                    timetable.subject_code = subject.subject_code  
+                    db.session.commit()  
+    
+                flash('Subject name and related timetables updated successfully.', 'success')  
             except IntegrityError:  
                 db.session.rollback()  
                 flash('An error occurred while updating the subject. Please try again.', 'error')  
         else:  
             flash('Subject not found.', 'error')  
-        
+  
         return redirect(url_for('admin_dashboard'))  
   
     @app.route('/admin/generate_conflict_report', methods=['GET'])  

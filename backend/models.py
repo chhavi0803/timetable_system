@@ -83,21 +83,19 @@ class Class(db.Model):
     class_name = db.Column(db.String(20), unique=True, nullable=False)  # class_name is unique
 
 
-class Timetable(db.Model):
-    __tablename__ = 'timetable'
-    id = db.Column(db.Integer, primary_key=True)
-
-    # Use class_name as foreign key since it is unique
-    class_name = db.Column(db.String(50), db.ForeignKey('class.class_name'), nullable=False)  # Referencing class_name
-    day = db.Column(db.Enum('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'), nullable=False)
-    time_slot = db.Column(db.String(50), nullable=False)
-    subject_code = db.Column(db.String(50), db.ForeignKey('subjects.subject_code'), nullable=False)
-    teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'), nullable=False)
-
-    # Relationships
-    class_ = db.relationship('Class', backref='timetables', lazy=True)
-    subject = db.relationship('Subject', backref='timetables', lazy=True)
-    teacher = db.relationship('Teacher', backref='timetables', lazy=True)
+class Timetable(db.Model):  
+    __tablename__ = 'timetable'  
+    id = db.Column(db.Integer, primary_key=True)  
+    class_name = db.Column(db.String(50), db.ForeignKey('class.class_name'), nullable=False)  # Referencing class_name  
+    day = db.Column(db.Enum('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'), nullable=False)  
+    time_slot = db.Column(db.String(50), nullable=False)  
+    subject_code = db.Column(db.String(50), db.ForeignKey('subjects.subject_code'), nullable=False)  
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'), nullable=False)  
+  
+    # Relationships  
+    class_ = db.relationship('Class', backref='timetables', lazy=True)  
+    subject = db.relationship('Subject', backref='timetables', lazy=True)  
+    teacher = db.relationship('Teacher', backref='timetables', lazy=True)  
 
 
 class StudentTimetable(db.Model):
