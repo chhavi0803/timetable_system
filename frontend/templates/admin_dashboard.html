@@ -284,7 +284,6 @@
                         <h5>Assign Teachers to Subjects</h5>
                         <!-- Assign Teacher Form -->
                         <form method="POST" action="{{ url_for('assign_teacher_subject') }}" class="form-inline">
-                            <!-- Subject Dropdown Header -->
                             <label for="subject_name" class="form-label"><strong>Select Subject</strong></label>
                             <select name="subject_name" class="form-select mb-2" id="subject_name" required>
                                 {% for subject in subjects %}
@@ -292,7 +291,6 @@
                                 {% endfor %}
                             </select>
 
-                            <!-- Teacher Dropdown Header -->
                             <label for="teacher_id" class="form-label mt-2"><strong>Select Teacher</strong></label>
                             <select name="teacher_id" class="form-select mb-2" id="teacher_id" required>
                                 {% for teacher in teachers %}
@@ -300,38 +298,56 @@
                                 {% endfor %}
                             </select>
 
-                            <!-- Submit Button -->
                             <button type="submit" class="btn btn-success mt-2"><i class="fas fa-check"></i> Assign Teacher</button>
                         </form>
-                        <!-- Current Teacher Assignments Section -->    
+                        
+ 
                         <h5 class="mt-4">Current Teacher Assignments</h5>  
                         <table class="table table-striped mt-3">  
                             <thead>  
                                 <tr>  
-                                    <th>Subject</th>  
                                     <th>Teacher</th>  
+                                    <th>Subjects</th>  
                                     <th>Actions</th>  
                                 </tr>  
                             </thead>  
                             <tbody>  
-                                {% for assignment in teacher_assignments %}  
-                                <tr>  
-                                    <td>{{ assignment.subject_name }}</td>  
-                                    <td>{{ assignment.teacher_name }}</td>  
-                                    <td>  
-                                        <form method="POST" action="{{ url_for('remove_teacher_assignment') }}" class="d-inline">  
-                                            <input type="hidden" name="teacher_id" value="{{ assignment.teacher_id }}">  
-                                            <input type="hidden" name="subject_code" value="{{ assignment.subject_code }}">  
-                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Remove</button>  
-                                        </form>  
-                                    </td>  
-                                </tr>  
+                                {% for teacher in teachers %}  
+                                    {% if teacher.subjects %}  
+                                    <tr>  
+                                        <td>{{ teacher.teacher_name }}</td>  
+                                        <td>  
+                                            {% for subject in teacher.subjects %}  
+                                                <form method="POST" action="{{ url_for('edit_teacher_assignment', teacher_id=teacher.id, subject_code=subject.subject_code) }}" class="d-inline">  
+                                                    <input type="text" name="subject_name" value="{{ subject.subject_name }}" class="form-control mb-2" required>  
+                                                    <button type="submit" class="btn btn-success mb-2"><i class="fas fa-save"></i> Save</button>  
+                                                </form>  
+                                                <form method="POST" action="{{ url_for('remove_teacher_assignment') }}" class="d-inline mt-2">  
+                                                    <input type="hidden" name="teacher_id" value="{{ teacher.id }}">  
+                                                    <input type="hidden" name="subject_code" value="{{ subject.subject_code }}">  
+                                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Remove</button>  
+                                                </form>  
+                                                <br>  
+                                            {% endfor %}  
+                                        </td>  
+                                        <td>  
+                                            <!-- Reassign all subjects form -->  
+                                            <form method="POST" action="{{ url_for('reassign_teacher_subjects') }}">  
+                                                <input type="hidden" name="old_teacher_id" value="{{ teacher.id }}">  
+                                                <label for="new_teacher_name_{{ teacher.id }}" class="form-label">New Teacher:</label>  
+                                                <input type="text" name="new_teacher_name" id="new_teacher_name_{{ teacher.id }}" class="form-control mb-2" required>  
+                                                <button type="submit" class="btn btn-warning"><i class="fas fa-exchange-alt"></i> Reassign All Subjects</button>  
+                                            </form>  
+                                        </td>  
+                                    </tr>  
+                                    {% endif %}  
                                 {% endfor %}  
                             </tbody>  
                         </table>
                     </div>
                 </div>
             </div>
+
             <!-- Manage Timetables Section -->  
             <div class="accordion-item">  
                 <h2 class="accordion-header" id="headingTimetable">  
