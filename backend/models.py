@@ -55,12 +55,10 @@ class Subject(db.Model):
 
 
 # Association table for the many-to-many relationship between Teacher and Subject
-teacher_subject = db.Table('teacher_subject',
-    db.Column('teacher_id', db.Integer, db.ForeignKey('teacher.id', ondelete="CASCADE"), primary_key=True),
-    db.Column('subject_code', db.String(50), db.ForeignKey('subjects.subject_code', ondelete="CASCADE"), primary_key=True)
+teacher_subject = db.Table('teacher_subject',  
+    db.Column('teacher_id', db.Integer, db.ForeignKey('teacher.id', ondelete="CASCADE"), primary_key=False),  
+    db.Column('subject_code', db.String(50), db.ForeignKey('subjects.subject_code', ondelete="CASCADE"), primary_key=False)  
 )
-
-
 class Teacher(db.Model):
     __tablename__ = 'teacher'
     id = db.Column(db.Integer, primary_key=True)

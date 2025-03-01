@@ -11,21 +11,21 @@
     <div class="container mt-4">
         <h2>Admin Dashboard</h2>
         <div class="accordion" id="adminDashboardAccordion">
-                <!-- Flash Messages Section -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="alert-container">
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                {% endwith %}
+            <!-- Flash Messages Section -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert-container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% endwith %}
 
             <!-- Overview/Summary Section -->
             <div class="accordion-item">
@@ -78,7 +78,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>User ID</th> <!-- New column for User ID -->
+                                    <th>User ID</th>
                                     <th>Username</th>
                                     <th>Actions</th>
                                 </tr>
@@ -86,7 +86,7 @@
                             <tbody>
                                 {% for user in users if user.role == 'admin' %}
                                 <tr>
-                                    <td>{{ user.user_id }}</td> <!-- Display user_id -->
+                                    <td>{{ user.user_id }}</td>
                                     <td>{{ user.username }}</td>
                                     <td>
                                         <form method="POST" action="{{ url_for('delete_user', user_id=user.user_id) }}" class="d-inline mt-2">
@@ -102,7 +102,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>User ID</th> <!-- New column for User ID -->
+                                    <th>User ID</th>
                                     <th>Username</th>
                                     <th>Actions</th>
                                 </tr>
@@ -110,7 +110,7 @@
                             <tbody>
                                 {% for user in users if user.role == 'teacher' %}
                                 <tr>
-                                    <td>{{ user.user_id }}</td> <!-- Display user_id -->
+                                    <td>{{ user.user_id }}</td>
                                     <td>{{ user.username }}</td>
                                     <td>
                                         <form method="POST" action="{{ url_for('delete_user', user_id=user.user_id) }}" class="d-inline mt-2">
@@ -126,7 +126,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>User ID</th> <!-- New column for User ID -->
+                                    <th>User ID</th>
                                     <th>Username</th>
                                     <th>Actions</th>
                                 </tr>
@@ -134,7 +134,7 @@
                             <tbody>
                                 {% for user in users if user.role == 'student' %}
                                 <tr>
-                                    <td>{{ user.user_id }}</td> <!-- Display user_id -->
+                                    <td>{{ user.user_id }}</td>
                                     <td>{{ user.username }}</td>
                                     <td>
                                         <form method="POST" action="{{ url_for('delete_user', user_id=user.user_id) }}" class="d-inline mt-2">
@@ -182,7 +182,7 @@
                         <table class="table table-striped mt-3">
                             <thead>
                                 <tr>
-                                    <th>Class ID</th>  <!-- Added Class ID column -->
+                                    <th>Class ID</th>
                                     <th>Class Name</th>
                                     <th>Actions</th>
                                 </tr>
@@ -190,7 +190,7 @@
                             <tbody>
                                 {% for class_ in classes %}
                                 <tr>
-                                    <td>{{ class_.id }}</td>  <!-- Displaying Class ID -->
+                                    <td>{{ class_.id }}</td>
                                     <td>{{ class_.class_name }}</td>
                                     <td>
                                         <!-- Edit form for the class -->
@@ -211,7 +211,6 @@
                     </div>
                 </div>
             </div>
-
 
             <!-- Manage Subjects Section -->
             <div class="accordion-item">
@@ -236,7 +235,7 @@
                         <table class="table table-striped mt-3">
                             <thead>
                                 <tr>
-                                    <th>Subject Code</th> <!-- Change header to Subject Code -->
+                                    <th>Subject Code</th>
                                     <th>Subject Name</th>
                                     <th>Actions</th>
                                 </tr>
@@ -244,8 +243,8 @@
                             <tbody>
                                 {% for subject in subjects %}
                                 <tr>
-                                    <td>{{ subject.subject_code }}</td> <!-- Display subject_code -->
-                                    <td>{{ subject.subject_name }}</td> <!-- Display subject_name -->
+                                    <td>{{ subject.subject_code }}</td>
+                                    <td>{{ subject.subject_name }}</td>
                                     <td>
                                         <!-- Edit form for the subject -->
                                         <form method="POST" action="{{ url_for('edit_subject', subject_code=subject.subject_code) }}">
@@ -271,7 +270,6 @@
                 </div>
             </div>
 
-
             <!-- Manage Teachers Section -->
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingTeachers">
@@ -290,7 +288,7 @@
                             <label for="subject_name" class="form-label"><strong>Select Subject</strong></label>
                             <select name="subject_name" class="form-select mb-2" id="subject_name" required>
                                 {% for subject in subjects %}
-                                    <option value="{{ subject.subject_name }}">{{ subject.subject_name }}</option> <!-- Changed to subject_name -->
+                                    <option value="{{ subject.subject_name }}">{{ subject.subject_name }}</option>
                                 {% endfor %}
                             </select>
 
@@ -298,157 +296,217 @@
                             <label for="teacher_id" class="form-label mt-2"><strong>Select Teacher</strong></label>
                             <select name="teacher_id" class="form-select mb-2" id="teacher_id" required>
                                 {% for teacher in teachers %}
-                                    <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option> <!-- Using teacher_name -->
+                                    <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option>
                                 {% endfor %}
                             </select>
 
                             <!-- Submit Button -->
                             <button type="submit" class="btn btn-success mt-2"><i class="fas fa-check"></i> Assign Teacher</button>
                         </form>
-                        <h5 class="mt-4">Current Teacher Assignments</h5>
-                        <table class="table table-striped mt-3">
-                            <thead>
-                                <tr>
-                                    <th>Subject</th>
-                                    <th>Teacher</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for assignment in teacher_assignments %}
-                                <tr>
-                                    <td>{{ assignment.subject_name }}</td>
-                                    <td>{{ assignment.teacher_username }}</td>
-                                    <td>
-                                        <form method="POST" action="{{ url_for('remove_teacher_assignment', assignment_id=assignment.id) }}" class="d-inline">
-                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Remove</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
+                        <!-- Current Teacher Assignments Section -->    
+                        <h5 class="mt-4">Current Teacher Assignments</h5>  
+                        <table class="table table-striped mt-3">  
+                            <thead>  
+                                <tr>  
+                                    <th>Subject</th>  
+                                    <th>Teacher</th>  
+                                    <th>Actions</th>  
+                                </tr>  
+                            </thead>  
+                            <tbody>  
+                                {% for assignment in teacher_assignments %}  
+                                <tr>  
+                                    <td>{{ assignment.subject_name }}</td>  
+                                    <td>{{ assignment.teacher_name }}</td>  
+                                    <td>  
+                                        <form method="POST" action="{{ url_for('remove_teacher_assignment') }}" class="d-inline">  
+                                            <input type="hidden" name="teacher_id" value="{{ assignment.teacher_id }}">  
+                                            <input type="hidden" name="subject_code" value="{{ assignment.subject_code }}">  
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Remove</button>  
+                                        </form>  
+                                    </td>  
+                                </tr>  
+                                {% endfor %}  
+                            </tbody>  
                         </table>
                     </div>
                 </div>
             </div>
-
-            <!-- Timetable Management Section -->
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="headingTimetable">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseTimetable" aria-expanded="false" aria-controls="collapseTimetable">
-                        Manage Timetables
-                    </button>
-                </h2>
-                <div id="collapseTimetable" class="accordion-collapse collapse" aria-labelledby="headingTimetable"
-                    data-bs-parent="#adminDashboardAccordion">
-                    <div class="accordion-body">
-                        <h5>Create Timetable</h5>
-                        <form method="POST" action="{{ url_for('create_timetable') }}">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="class_name" class="form-label"><strong>Select Class</strong></label>
-                                    <select name="class_name" class="form-select mb-2" id="class_name" required>
-                                        {% for class_ in classes %}
-                                            <option value="{{ class_.class_name }}">{{ class_.class_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    <label for="subject_name" class="form-label"><strong>Select Subject</strong></label>
-                                    <select name="subject_name" class="form-select mb-2" id="subject_name" required>
-                                        {% for subject in subjects %}
-                                            <option value="{{ subject.subject_name }}">{{ subject.subject_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    <label for="teacher_id" class="form-label"><strong>Select Teacher</strong></label>
-                                    <select name="teacher_id" class="form-select mb-2" id="teacher_id" required>
-                                        {% for teacher in teachers %}
-                                            <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option>
-                                        {% else %}
-                                            <option value="">No teachers available</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Add Day Dropdown Header -->
-                            <div class="row mt-3">
-                                <div class="col">
-                                    <label for="day" class="form-label"><strong>Select Day</strong></label>
-                                    <select name="day" class="form-select mb-2" id="day" required>
-                                        <option value="Monday">Monday</option>
-                                        <option value="Tuesday">Tuesday</option>
-                                        <option value="Wednesday">Wednesday</option>
-                                        <option value="Thursday">Thursday</option>
-                                        <option value="Friday">Friday</option>
-                                    </select>
-                                </div>
-
-                                <!-- Time Slot Dropdown Header -->
-                                <div class="col">
-                                    <label for="timeslot" class="form-label"><strong>Select Time Slot</strong></label>
-                                    <select name="time_slot" class="form-select mb-2" id="time_slot" required>
-                                        <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-                                        <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-                                        <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
-                                        <option value="12:00 PM - 1:00 PM">12:00 PM - 1:00 PM</option>
-                                        <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
-                                        <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
-                                        <option value="4:00 PM - 5:00 PM">4:00 PM - 5:00 PM</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <button type="submit" class="btn btn-success mt-3"><i class="fas fa-calendar"></i> Create Timetable</button>
-                        </form>
-                        <!-- <h5 class="mt-4">View and Edit Timetables</h5> -->
-                        <h5>View and Edit Timetables</h5>
-                        <p>Timetables Data: {{ timetables_data }}</p>
-                        <table class="table table-striped mt-3">
-                            <thead>
-                                <tr>
-                                    <th>Class Name</th>
-                                    <th>Subject</th>
-                                    <th>Teacher</th>
-                                    <th>Day</th>
-                                    <th>Time Slot</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% if timetables_data %}
-                                    {% for timetable, class_, subject, teacher in timetables_data %}
-                                        <tr>
-                                            <td>{{ class_.class_name }}</td>
-                                            <td>{{ subject.subject_name }}</td>
-                                            <td>{{ teacher.teacher_name }}</td>
-                                            <td>{{ timetable.day }}</td>
-                                            <td>{{ timetable.time_slot }}</td>
-                                            <td>
-                                                <form method="POST" action="{{ url_for('edit_timetable', timetable_id=timetable.id) }}" class="d-inline">
-                                                    <button type="submit" class="btn btn-warning"><i class="fas fa-edit"></i> Edit</button>
-                                                </form>
-                                                <form method="POST" action="{{ url_for('delete_timetable', timetable_id=timetable.id) }}" class="d-inline mt-2">
-                                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="6">No timetables found</td>
-                                    </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <!-- Manage Timetables Section -->  
+            <div class="accordion-item">  
+                <h2 class="accordion-header" id="headingTimetable">  
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"  
+                            data-bs-target="#collapseTimetable" aria-expanded="false" aria-controls="collapseTimetable">  
+                        Manage Timetables  
+                    </button>  
+                </h2>  
+                <div id="collapseTimetable" class="accordion-collapse collapse" aria-labelledby="headingTimetable"  
+                    data-bs-parent="#adminDashboardAccordion">  
+                    <div class="accordion-body">  
+                        <h5>Create Timetable</h5>  
+                        <form method="POST" action="{{ url_for('create_timetable') }}">  
+                            <div class="row">  
+                                <div class="col">  
+                                    <label for="class_name" class="form-label"><strong>Select Class</strong></label>  
+                                    <select name="class_name" class="form-select mb-2" id="class_name" required>  
+                                        {% for class_ in classes %}  
+                                            <option value="{{ class_.class_name }}">{{ class_.class_name }}</option>  
+                                        {% endfor %}  
+                                    </select>  
+                                </div>  
+                                <div class="col">  
+                                    <label for="subject_name" class="form-label"><strong>Select Subject</strong></label>  
+                                    <select name="subject_name" class="form-select mb-2" id="subject_name" required>  
+                                        {% for subject in subjects %}  
+                                            <option value="{{ subject.subject_name }}">{{ subject.subject_name }}</option>  
+                                        {% endfor %}  
+                                    </select>  
+                                </div>  
+                                <div class="col">  
+                                    <label for="teacher_id" class="form-label"><strong>Select Teacher</strong></label>  
+                                    <select name="teacher_id" class="form-select mb-2" id="teacher_id" required>  
+                                        {% for teacher in teachers %}  
+                                            <option value="{{ teacher.id }}">{{ teacher.teacher_name }}</option>  
+                                        {% else %}  
+                                            <option value="">No teachers available</option>  
+                                        {% endfor %}  
+                                    </select>  
+                                </div>  
+                            </div>  
+                            <div class="row mt-3">  
+                                <div class="col">  
+                                    <label for="day" class="form-label"><strong>Select Day</strong></label>  
+                                    <select name="day" class="form-select mb-2" id="day" required>  
+                                        <option value="Monday">Monday</option>  
+                                        <option value="Tuesday">Tuesday</option>  
+                                        <option value="Wednesday">Wednesday</option>  
+                                        <option value="Thursday">Thursday</option>  
+                                        <option value="Friday">Friday</option>  
+                                    </select>  
+                                </div>  
+                                <div class="col">  
+                                    <label for="time_slot" class="form-label"><strong>Select Time Slot</strong></label>  
+                                    <select name="time_slot" class="form-select mb-2" id="time_slot" required>  
+                                        <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>  
+                                        <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>  
+                                        <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>  
+                                        <option value="12:00 PM - 1:00 PM">12:00 PM - 1:00 PM</option>  
+                                        <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>  
+                                        <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>  
+                                    </select>  
+                                </div>  
+                            </div>  
+                            <button type="submit" class="btn btn-primary mt-3">Create Timetable</button>  
+                        </form>  
             
+                        <h5 class="mt-5">View and Edit Timetables</h5>  
+                        <table class="table table-striped mt-3">  
+                            <thead>  
+                                <tr>  
+                                    <th>Class Name</th>  
+                                    <th>Subject</th>  
+                                    <th>Teacher</th>  
+                                    <th>Day</th>  
+                                    <th>Time Slot</th>  
+                                    <th>Actions</th>  
+                                </tr>  
+                            </thead>  
+                            <tbody>  
+                                {% if timetables_data %}  
+                                    {% for timetable, class_, subject, teacher in timetables_data %}  
+                                        <tr>  
+                                            <td>{{ class_.class_name }}</td>  
+                                            <td>{{ subject.subject_name }}</td>  
+                                            <td>{{ teacher.teacher_name }}</td>  
+                                            <td>{{ timetable.day }}</td>  
+                                            <td>{{ timetable.time_slot }}</td>  
+                                            <td>  
+                                                <!-- Edit Button -->  
+                                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editTimetableModal{{ timetable.id }}">  
+                                                    <i class="fas fa-edit"></i> Edit  
+                                                </button>  
+            
+                                                <!-- Delete Form -->  
+                                                <form method="POST" action="{{ url_for('delete_timetable', timetable_id=timetable.id) }}" class="d-inline">  
+                                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>  
+                                                </form>  
+                                            </td>  
+                                        </tr>  
+            
+                                        <!-- Edit Timetable Modal -->  
+                                        <div class="modal fade" id="editTimetableModal{{ timetable.id }}" tabindex="-1" aria-labelledby="editTimetableModalLabel{{ timetable.id }}" aria-hidden="true">  
+                                            <div class="modal-dialog">  
+                                                <div class="modal-content">  
+                                                    <div class="modal-header">  
+                                                        <h5 class="modal-title" id="editTimetableModalLabel{{ timetable.id }}">Edit Timetable</h5>  
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>  
+                                                    </div>  
+                                                    <div class="modal-body">  
+                                                        <form method="POST" action="{{ url_for('edit_timetable', timetable_id=timetable.id) }}">  
+                                                            <div class="form-group">  
+                                                                <label for="class_name">Class Name</label>  
+                                                                <select name="class_name" id="class_name" class="form-control" required>  
+                                                                    {% for class_ in classes %}  
+                                                                        <option value="{{ class_.class_name }}" {% if class_.class_name == timetable.class_name %}selected{% endif %}>{{ class_.class_name }}</option>  
+                                                                    {% endfor %}  
+                                                                </select>  
+                                                            </div>  
+                                                            <div class="form-group">  
+                                                                <label for="day">Day</label>  
+                                                                <select name="day" id="day" class="form-control" required>  
+                                                                    <option value="Monday" {% if timetable.day == 'Monday' %}selected{% endif %}>Monday</option>
+                                                                    <option value="Tuesday" {% if timetable.day == 'Tuesday' %}selected{% endif %}>Tuesday</option>  
+                                                                    <option value="Wednesday" {% if timetable.day == 'Wednesday' %}selected{% endif %}>Wednesday</option>
+                                                                    <option value="Wednesday" {% if timetable.day == 'Wednesday' %}selected{% endif %}>Wednesday</option>  
+                                                                    <option value="Thursday" {% if timetable.day == 'Thursday' %}selected{% endif %}>Thursday</option>  
+                                                                    <option value="Friday" {% if timetable.day == 'Friday' %}selected{% endif %}>Friday</option>  
+                                                                </select>  
+                                                            </div>  
+                                                            <div class="form-group">  
+                                                                <label for="time_slot">Time Slot</label>  
+                                                                <select name="time_slot" id="time_slot" class="form-control" required>  
+                                                                    <option value="9:00 AM - 10:00 AM" {% if timetable.time_slot == '9:00 AM - 10:00 AM' %}selected{% endif %}>9:00 AM - 10:00 AM</option>  
+                                                                    <option value="10:00 AM - 11:00 AM" {% if timetable.time_slot == '10:00 AM - 11:00 AM' %}selected{% endif %}>10:00 AM - 11:00 AM</option>  
+                                                                    <option value="11:00 AM - 12:00 PM" {% if timetable.time_slot == '11:00 AM - 12:00 PM' %}selected{% endif %}>11:00 AM - 12:00 PM</option>  
+                                                                    <option value="12:00 PM - 1:00 PM" {% if timetable.time_slot == '12:00 PM - 1:00 PM' %}selected{% endif %}>12:00 PM - 1:00 PM</option>  
+                                                                    <option value="2:00 PM - 3:00 PM" {% if timetable.time_slot == '2:00 PM - 3:00 PM' %}selected{% endif %}>2:00 PM - 3:00 PM</option>  
+                                                                    <option value="3:00 PM - 4:00 PM" {% if timetable.time_slot == '3:00 PM - 4:00 PM' %}selected{% endif %}>3:00 PM - 4:00 PM</option>
+                                                                    <option value="4:00 PM - 5:00 PM" {% if timetable.time_slot == '4:00 PM - 5:00 PM' %}selected{% endif %}>4:00 PM - 5:00 PM</option> 
+                                                                </select>  
+                                                            </div>  
+                                                            <div class="form-group">  
+                                                                <label for="subject_name">Subject Name</label>  
+                                                                <select name="subject_name" id="subject_name" class="form-control" required>  
+                                                                    {% for subject in subjects %}  
+                                                                        <option value="{{ subject.subject_name }}" {% if subject.subject_name == timetable.subject_name %}selected{% endif %}>{{ subject.subject_name }}</option>  
+                                                                    {% endfor %}  
+                                                                </select>  
+                                                            </div>  
+                                                            <div class="form-group">  
+                                                                <label for="teacher_id">Teacher</label>  
+                                                                <select name="teacher_id" id="teacher_id" class="form-control" required>  
+                                                                    {% for teacher in teachers %}  
+                                                                        <option value="{{ teacher.id }}" {% if teacher.id == timetable.teacher_id %}selected{% endif %}>{{ teacher.teacher_name }}</option>  
+                                                                    {% endfor %}  
+                                                                </select>  
+                                                            </div>  
+                                                            <button type="submit" class="btn btn-warning mt-3">Save Changes</button>  
+                                                        </form>  
+                                                    </div>  
+                                                </div>  
+                                            </div>  
+                                        </div>  
+                                    {% endfor %}  
+                                {% else %}  
+                                    <tr>  
+                                        <td colspan="6">No timetables found</td>  
+                                    </tr>  
+                                {% endif %}  
+                            </tbody>  
+                        </table>  
+                    </div>  
+                </div>  
+            </div>                                                                  
             <!-- Export PDF Section -->
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingExportPDF">

@@ -4,6 +4,9 @@ from sqlalchemy.exc import IntegrityError
 from database import db
 from models import User, Teacher, Class, Subject, Timetable, generate_user_id  # <-- Import generate_user_id here
 from util import generate_pdf, generate_conflict_report, generate_timetable_report
+from models import db, teacher_subject
+from sqlalchemy.exc import IntegrityError
+
 
 def init_routes(app):
     @app.route('/')
@@ -73,40 +76,65 @@ def init_routes(app):
 
         return render_template('login.html')
 
-    @app.route('/admin_dashboard')
-    def admin_dashboard():
-        if session.get('user_role') != 'admin':
-            return redirect(url_for('index'))
+    @app.route('/admin_dashboard')  
+    def admin_dashboard():  
+        if session.get('user_role') != 'admin':  
+            return redirect(url_for('index'))  
 
-        # Fetching all users, classes, teachers, and subjects
-        users = User.query.all()
-        classes = Class.query.all()
-        teachers = Teacher.query.all()
-        subjects = Subject.query.all()
-        timetables = Timetable.query.all()
-        print(timetables)
+        # Fetching all users, classes, teachers, and subjects  
+        users = User.query.all()  
+        classes = Class.query.all()  
+        teachers = Teacher.query.all()  
+        subjects = Subject.query.all()  
 
-        total_users = len(users)
-        total_classes = len(classes)
-        total_subjects = len(subjects)
-        total_timetables = len(timetables)
-        
-        recent_logs = []
+        # Fetch teacher assignments  
+        teacher_assignments = db.session.query(  
+            teacher_subject.c.teacher_id,  
+            teacher_subject.c.subject_code,  
+            Teacher.teacher_name,  
+            Subject.subject_name  
+        ).join(  
+            Teacher, teacher_subject.c.teacher_id == Teacher.id  
+        ).join(  
+            Subject, teacher_subject.c.subject_code == Subject.subject_code  
+        ).all()  
 
-        return render_template(
-            'admin_dashboard.html',
-            users=users,
-            classes=classes,
-            teachers=teachers,
-            subjects=subjects,
-            timetables=timetables,
-            total_users=total_users,
-            total_classes=total_classes,
-            total_subjects=total_subjects,
-            total_timetables=total_timetables,
-            recent_logs=recent_logs
-        )
+        total_users = len(users)  
+        total_classes = len(classes)  
+        total_subjects = len(subjects)  
+        total_timetables = len(Timetable.query.all())  
 
+        recent_logs = []  
+
+        # Fetch timetable data  
+        try:  
+            timetables_data = db.session.query(  
+                Timetable, Class, Subject, Teacher  
+            ).join(  
+                Class, Timetable.class_name == Class.class_name  
+            ).join(  
+                Subject, Timetable.subject_code == Subject.subject_code  
+            ).join(  
+                Teacher, Timetable.teacher_id == Teacher.id  
+            ).all()  
+        except Exception as e:  
+            print(f"An error occurred: {e}")  
+            timetables_data = []  # set to empty list on error  
+
+        return render_template(  
+            'admin_dashboard.html',  
+            users=users,  
+            classes=classes,  
+            teachers=teachers,  
+            subjects=subjects,  
+            total_users=total_users,  
+            total_classes=total_classes,  
+            total_subjects=total_subjects,  
+            total_timetables=total_timetables,  
+            recent_logs=recent_logs,  
+            teacher_assignments=teacher_assignments,  
+            timetables_data=timetables_data  # Pass the timetable data  
+        )  
 
     @app.route('/admin/add_user', methods=['POST'])
     def add_user():
@@ -344,160 +372,6 @@ def init_routes(app):
 
         return redirect(url_for('admin_dashboard'))
 
-    @app.route('/admin/create_timetable', methods=['POST'])
-    def create_timetable():
-        if session.get('user_role') != 'admin':
-            return redirect(url_for('index'))
-
-        class_name = request.form['class_name']  # Use class_name instead of class_name
-        day = request.form['day']
-        time_slot = request.form['time_slot']
-        subject_name = request.form['subject_name']
-        teacher_id = request.form['teacher_id']
-
-        # Retrieve the class by class_name
-        class_ = Class.query.filter_by(class_name=class_name).first()
-        if not class_:
-            flash('Invalid class selected.', 'error')
-            return redirect(url_for('admin_dashboard'))
-
-        # Retrieve subject_code from subject_name
-        subject = Subject.query.filter_by(subject_name=subject_name).first()
-        if not subject:
-            flash('Invalid subject selected.', 'error')
-            return redirect(url_for('admin_dashboard'))
-
-        subject_code = subject.subject_code
-
-        # Check for teacher and classroom conflicts
-        conflict_teacher = Timetable.query.filter_by(day=day, time_slot=time_slot, teacher_id=teacher_id).first()
-        if conflict_teacher:
-            flash('Conflict detected: The same teacher is assigned to another class at this time.', 'error')
-            return redirect(url_for('admin_dashboard'))
-
-        conflict_classroom = Timetable.query.filter_by(day=day, time_slot=time_slot, class_name=class_name).first()
-        if conflict_classroom:
-            flash('Conflict detected: The classroom is already booked at this time.', 'error')
-            return redirect(url_for('admin_dashboard'))
-
-        timetable = Timetable(
-            class_name=class_name,
-            day=day, 
-            time_slot=time_slot, 
-            subject_code=subject_code, 
-            teacher_id=teacher_id
-        )
-        db.session.add(timetable)
-        try:
-            db.session.commit()
-            flash('Timetable created successfully.', 'success')
-        except IntegrityError:
-            db.session.rollback()
-            flash('An error occurred while creating the timetable. Please try again.', 'error')
-
-        return redirect(url_for('admin_dashboard'))
-
-    @app.route('/admin/edit_timetable/<int:timetable_id>', methods=['POST'])
-    def edit_timetable(timetable_id):
-        if session.get('user_role') != 'admin':
-            return redirect(url_for('index'))
-
-        timetable = Timetable.query.get(timetable_id)
-
-        class_name = request.form.get('class_name')  # Use class_name instead of class_name
-        if not class_name:
-            flash('Class name is missing.', 'error')
-            return redirect(url_for('admin_dashboard'))
-
-        timetable.class_name = class_name  # Update class_name
-        timetable.day = request.form['day']
-        timetable.time_slot = request.form['time_slot']
-        subject_name = request.form['subject_name']
-        timetable.teacher_id = request.form['teacher_id']
-
-        subject = Subject.query.filter_by(subject_name=subject_name).first()
-        if not subject:
-            flash('Invalid subject selected.', 'error')
-            return redirect(url_for('admin_dashboard'))
-
-        timetable.subject_code = subject.subject_code
-
-        # Check for teacher and classroom conflicts
-        conflict_teacher = Timetable.query.filter_by(
-            day=timetable.day, time_slot=timetable.time_slot, teacher_id=timetable.teacher_id
-        ).filter(Timetable.id != timetable_id).first()
-
-        if conflict_teacher:
-            flash('Conflict detected: The same teacher is assigned to another class at this time.', 'error')
-            return redirect(url_for('admin_dashboard'))
-
-        conflict_classroom = Timetable.query.filter_by(
-            day=timetable.day, time_slot=timetable.time_slot, class_name=timetable.class_name  # Use class_name here
-        ).filter(Timetable.id != timetable_id).first()
-
-        if conflict_classroom:
-            flash('Conflict detected: The classroom is already booked at this time.', 'error')
-            return redirect(url_for('admin_dashboard'))
-
-        try:
-            db.session.commit()
-            flash('Timetable updated successfully.', 'success')
-        except IntegrityError:
-            db.session.rollback()
-            flash('An error occurred while updating the timetable. Please try again.', 'error')
-
-        return redirect(url_for('admin_dashboard'))
-
-    @app.route('/admin/view_timetables')
-    def view_timetables():
-        print("view_timetables route called")
-        if session.get('user_role') != 'admin':
-            return redirect(url_for('index'))
-
-        try:
-            timetables = Timetable.query.all()
-            print(f"Timetables: {timetables}")
-            for timetable in timetables:
-                class_ = Class.query.filter_by(class_name=timetable.class_name).first()
-                print(f"Class: {class_}")
-                subject = Subject.query.filter_by(subject_code=timetable.subject_code).first()
-                print(f"Subject: {subject}")
-                teacher = Teacher.query.get(timetable.teacher_id)
-                print(f"Teacher: {teacher}")
-            timetables_data = db.session.query(
-                Timetable, Class, Subject, Teacher
-            ).join(
-                Class, Timetable.class_name == Class.class_name
-            ).join(
-                Subject, Timetable.subject_code == Subject.subject_code
-            ).join(
-                Teacher, Timetable.teacher_id == Teacher.id
-            ).all()
-            print(f"Timetables data: {timetables_data}")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            timetables_data = [] #set to empty list on error.
-
-        classes = Class.query.all()
-        subjects = Subject.query.all()
-        teachers = Teacher.query.all()
-
-        return render_template('admin_dashboard.html', timetables_data=timetables_data, classes=classes, subjects=subjects, teachers=teachers)
-
-    @app.route('/admin/delete_timetable/<int:timetable_id>', methods=['POST'])
-    def delete_timetable(timetable_id):
-        if session.get('user_role') != 'admin':
-            return redirect(url_for('index'))
-
-        timetable = Timetable.query.get(timetable_id)
-        db.session.delete(timetable)
-        try:
-            db.session.commit()
-            flash('Timetable deleted successfully.', 'success')
-        except IntegrityError:
-            db.session.rollback()
-            flash('An error occurred while deleting the timetable. Please try again.', 'error')
-        return redirect(url_for('admin_dashboard'))
 
     @app.route('/admin/assign_teacher_subject', methods=['POST'])
     def assign_teacher_subject():
@@ -518,6 +392,12 @@ def init_routes(app):
             flash('Subject not found.', 'error')
             return redirect(url_for('admin_dashboard'))
 
+        # Check if the subject is already assigned to another teacher
+        assigned_teacher = db.session.query(Teacher).join(teacher_subject).filter(teacher_subject.c.subject_code == subject.subject_code).first()
+        if assigned_teacher:
+            flash(f'This subject is already assigned to {assigned_teacher.teacher_name}.', 'warning')
+            return redirect(url_for('admin_dashboard'))
+
         # Check if the teacher is already assigned to the subject
         if subject not in teacher.subjects:
             teacher.subjects.append(subject)
@@ -531,8 +411,164 @@ def init_routes(app):
             flash('This teacher is already assigned to the selected subject.', 'warning')
 
         return redirect(url_for('admin_dashboard'))
+    
 
+    @app.route('/admin/remove_teacher_assignment', methods=['POST'])  
+    def remove_teacher_assignment():  
+        if session.get('user_role') != 'admin':  
+            return redirect(url_for('index'))  
+        
+        teacher_id = request.form['teacher_id']  
+        subject_code = request.form['subject_code']  
+        
+        assignment = db.session.query(teacher_subject).filter(  
+            teacher_subject.c.teacher_id == teacher_id,  
+            teacher_subject.c.subject_code == subject_code  
+        ).first()  
+        
+        if assignment:  
+            db.session.execute(  
+                teacher_subject.delete().where(  
+                    teacher_subject.c.teacher_id == teacher_id,  
+                    teacher_subject.c.subject_code == subject_code  
+                )  
+            )  
+            try:  
+                db.session.commit()  
+                flash('Teacher assignment removed successfully.', 'success')  
+            except IntegrityError:  
+                db.session.rollback()  
+                flash('An error occurred while removing the assignment. Please try again.', 'error')  
+        else:  
+            flash('Assignment not found.', 'error')  
+        
+        return redirect(url_for('admin_dashboard'))  
 
+    @app.route('/admin/view_timetables')
+    def view_timetables():
+        if session.get('user_role') != 'admin':
+            return redirect(url_for('index'))
+
+        try:
+            timetables_data = db.session.query(
+                Timetable, Class, Subject, Teacher
+            ).join(
+                Class, Timetable.class_name == Class.class_name
+            ).join(
+                Subject, Timetable.subject_code == Subject.subject_code
+            ).join(
+                Teacher, Timetable.teacher_id == Teacher.id
+            ).all()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            timetables_data = []  # set to empty list on error.
+
+        classes = Class.query.all()
+        subjects = Subject.query.all()
+        teachers = Teacher.query.all()
+        teacher_assignments = db.session.query(teacher_subject).all()  # Fetch teacher assignments
+
+        return render_template('admin_dashboard.html', timetables_data=timetables_data, classes=classes, subjects=subjects, teachers=teachers, teacher_assignments=teacher_assignments)
+    
+
+    @app.route('/admin/create_timetable', methods=['POST'])  
+    def create_timetable():  
+        if session.get('user_role') != 'admin':  
+            return redirect(url_for('index'))  
+    
+        class_name = request.form.get('class_name')  
+        day = request.form.get('day')  
+        time_slot = request.form.get('time_slot')  
+        subject_name = request.form.get('subject_name')  
+        teacher_id = request.form.get('teacher_id')  
+    
+        if not class_name or not day or not time_slot or not subject_name or not teacher_id:  
+            flash('All fields are required.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        subject = Subject.query.filter_by(subject_name=subject_name).first()  
+        if not subject:  
+            flash('Invalid subject selected.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        timetable = Timetable(class_name=class_name, day=day, time_slot=time_slot, subject_code=subject.subject_code, teacher_id=teacher_id)  
+    
+        # Check for conflicts  
+        conflict_teacher = Timetable.query.filter_by(day=day, time_slot=time_slot, teacher_id=teacher_id).first()  
+        if conflict_teacher:  
+            flash('Conflict detected: The same teacher is assigned to another class at this time.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        conflict_classroom = Timetable.query.filter_by(day=day, time_slot=time_slot, class_name=class_name).first()  
+        if conflict_classroom:  
+            flash('Conflict detected: The same classroom is used for another class at this time.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        db.session.add(timetable)  
+        db.session.commit()  
+        flash('Timetable created successfully.', 'success')  
+        return redirect(url_for('admin_dashboard'))  
+
+    @app.route('/admin/edit_timetable/<int:timetable_id>', methods=['POST'])  
+    def edit_timetable(timetable_id):  
+        if session.get('user_role') != 'admin':  
+            return redirect(url_for('index'))  
+    
+        timetable = Timetable.query.get(timetable_id)  
+        if not timetable:  
+            flash('Timetable not found.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        class_name = request.form.get('class_name')  
+        day = request.form.get('day')  
+        time_slot = request.form.get('time_slot')  
+        subject_name = request.form.get('subject_name')  
+        teacher_id = request.form.get('teacher_id')  
+    
+        if not class_name or not day or not time_slot or not subject_name or not teacher_id:  
+            flash('All fields are required.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        subject = Subject.query.filter_by(subject_name=subject_name).first()  
+        if not subject:  
+            flash('Invalid subject selected.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        timetable.class_name = class_name  
+        timetable.day = day  
+        timetable.time_slot = time_slot  
+        timetable.subject_code = subject.subject_code  
+        timetable.teacher_id = teacher_id  
+    
+        # Check for conflicts  
+        conflict_teacher = Timetable.query.filter_by(day=day, time_slot=time_slot, teacher_id=teacher_id).filter(Timetable.id != timetable_id).first()  
+        if conflict_teacher:  
+            flash('Conflict detected: The same teacher is assigned to another class at this time.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        conflict_classroom = Timetable.query.filter_by(day=day, time_slot=time_slot, class_name=class_name).filter(Timetable.id != timetable_id).first()  
+        if conflict_classroom:  
+            flash('Conflict detected: The same classroom is used for another class at this time.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        db.session.commit()  
+        flash('Timetable updated successfully.', 'success')  
+        return redirect(url_for('admin_dashboard'))  
+
+    @app.route('/admin/delete_timetable/<int:timetable_id>', methods=['POST'])  
+    def delete_timetable(timetable_id):  
+        if session.get('user_role') != 'admin':  
+            return redirect(url_for('index'))  
+    
+        timetable = Timetable.query.get(timetable_id)  
+        if not timetable:  
+            flash('Timetable not found.', 'error')  
+            return redirect(url_for('admin_dashboard'))  
+    
+        db.session.delete(timetable)  
+        db.session.commit()  
+        flash('Timetable deleted successfully.', 'success')  
+        return redirect(url_for('admin_dashboard'))    
 
     @app.route('/admin/generate_conflict_report', methods=['GET'])
     def generate_conflict_report_route():
